@@ -13,7 +13,7 @@ export interface IPatient extends Document {
 
 const PatientSchema = new Schema<IPatient>({
   fullName: { type: String, required: true },
-  email: { type: String, required: false, unique: false },
+  email: { type: String, required: false },
   phone: { type: String, required: true },
   reason: { type: String, required: true },
   doctorType: { type: String, required: true },

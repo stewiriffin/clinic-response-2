@@ -92,6 +92,7 @@ export async function POST(request: Request) {
       patient: patient._id,
       queueNumber: count + 1,
       status: 'waiting',
+      doctorType: result.data.doctorType,
     })
 
     // 🔔 Trigger real-time notification

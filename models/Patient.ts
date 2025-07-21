@@ -1,9 +1,8 @@
-// models/Patient.ts
 import mongoose, { Schema, Document } from 'mongoose'
 
 export interface IPatient extends Document {
   fullName: string
-  email: string
+  email?: string
   phone: string
   reason: string
   doctorType: string
@@ -12,9 +11,9 @@ export interface IPatient extends Document {
 }
 
 const PatientSchema = new Schema<IPatient>({
-  fullName: { type: String, required: true },
-  email: { type: String, required: false },
-  phone: { type: String, required: true },
+  fullName: { type: String, required: true, trim: true },
+  email: { type: String, required: false, trim: true, lowercase: true },
+  phone: { type: String, required: true, trim: true, maxlength: 10 },
   reason: { type: String, required: true },
   doctorType: { type: String, required: true },
   role: { type: String, default: 'patient' },

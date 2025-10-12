@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import {
   Heart, Thermometer, Activity, Ruler, Weight, FileText, Bell,
-  LogOut, Menu, X, Filter, AlertCircle, CheckCircle,
+  LogOut, Menu, X, Search, Filter, AlertCircle, CheckCircle,
   Clock, Stethoscope, Phone, User
 } from 'lucide-react'
 
@@ -238,19 +238,19 @@ export default function NurseDashboard() {
                 icon={<User className="w-4 h-4" />}
                 placeholder="Search by name"
                 value={filters.name}
-                onChange={(value: string) => setFilters(prev => ({ ...prev, name: value }))}
+                onChange={(value) => setFilters(prev => ({ ...prev, name: value }))}
               />
               <FilterInput
                 icon={<Phone className="w-4 h-4" />}
                 placeholder="Search by phone"
                 value={filters.phone}
-                onChange={(value: string) => setFilters(prev => ({ ...prev, phone: value }))}
+                onChange={(value) => setFilters(prev => ({ ...prev, phone: value }))}
               />
               <FilterInput
                 icon={<Stethoscope className="w-4 h-4" />}
                 placeholder="Search by doctor"
                 value={filters.doctor}
-                onChange={(value: string) => setFilters(prev => ({ ...prev, doctor: value }))}
+                onChange={(value) => setFilters(prev => ({ ...prev, doctor: value }))}
               />
               <select
                 value={filters.status}
@@ -535,7 +535,7 @@ const VitalDisplay = ({ icon: Icon, label, value, unit }: any) => (
   </div>
 )
 
-const StatCard = ({ label, value }: any) => (
+const StatCard = ({ label, value, color }: any) => (
   <div className="p-3 bg-white/5 border border-white/10 rounded-lg hover:border-white/20 transition-all text-center">
     <p className="text-lg font-bold text-white">{value}</p>
     <p className="text-xs text-slate-400">{label}</p>

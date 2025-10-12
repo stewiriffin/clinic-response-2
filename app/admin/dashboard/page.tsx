@@ -3,84 +3,84 @@
 import { useEffect, useState, useMemo, useCallback } from 'react'
 import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { 
-  Search, Trash2, Download, Users, Calendar, Pill, Activity, X, AlertCircle
+import {
+  BarChart3, Users, Settings, LogOut, Menu, X, Plus,
+  Search, Filter, Download, Trash2, AlertCircle, CheckCircle,
+  TrendingUp, Activity, Calendar, Pill, ChevronDown, Eye, EyeOff
 } from 'lucide-react'
+import toast from 'react-hot-toast'
 
-type User = {
+interface User {
   _id: string
   fullName: string
   email: string
-  role: Role
-  status?: 'active' | 'inactive'
-  createdAt?: string
+  role: string
+  status: 'active' | 'inactive'
+  createdAt: string
+  lastLogin?: string
 }
 
-type Log = {
+interface Metrics {
+  totalUsers: number
+  totalAppointments: number
+  totalPrescriptions: number
+  todayAppointments: number
+  activeUsers: number
+  revenue?: number
+}
+
+interface AuditLog {
+  _id: string
   actorEmail: string
   action: string
+  resource: string
+  resourceId: string
   timestamp: string
-  type?: 'create' | 'update' | 'delete' | 'login'
+  ipAddress?: string
 }
-
-type Metrics = {
-  users: number
-  appointments: number
-  prescriptions: number
-  todayAppointments: number
-}
-
-const roles = [
-  'admin',
-  'doctor',
-  'nurse',
-  'pharmacist',
-  'lab technician',
-  'receptionist',
-] as const
-
-type Role = (typeof roles)[number]
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
 
   const [users, setUsers] = useState<User[]>([])
-  const [logs, setLogs] = useState<Log[]>([])
-  const [metrics, setMetrics] = useState<Metrics>({
-    users: 0,
-    appointments: 0,
-    prescriptions: 0,
-    todayAppointments: 0,
-  })
-  
-  const [search, setSearch] = useState('')
-  const [roleFilter, setRoleFilter] = useState<Role | 'all'>('all')
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all')
-  
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
+  const [metrics, setMetrics] = useState<Metrics | null>(null)
+  const [logs, setLogs] = useState<AuditLog[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'logs'>('overview')
-  const [deleteUserId, setDeleteUserId] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
+  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'logs'>('overview')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [roleFilter, setRoleFilter] = useState('all')
+  const [statusFilter, setStatusFilter] = useState('all')
+  const [sortBy, setSortBy] = useState('name')
+  const [selectedUser, setSelectedUser] = useState<User | null>(null)
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
+
+  // Authentication check
   useEffect(() => {
-    if (status === 'unauthenticated') router.push('/login')
-    else if (status === 'authenticated' && session?.user?.role !== 'Admin') {
-      signOut({ callbackUrl: '/login' })
+    if (status === 'unauthenticated') {
+      router.push('/login')
+    } else if (status === 'authenticated' && session?.user?.role !== 'admin') {
+      router.push('/login')
     }
   }, [status, session, router])
 
+  // Fetch data
   const fetchData = useCallback(async () => {
     try {
       setLoading(true)
+      setError(null)
+
       const [usersRes, metricsRes, logsRes] = await Promise.all([
-        fetch('/api/users'),
+        fetch('/api/admin/users'),
         fetch('/api/admin/metrics'),
-        fetch('/api/admin/audit-logs'),
+        fetch('/api/admin/logs'),
       ])
+
       if (!usersRes.ok || !metricsRes.ok || !logsRes.ok) {
-        throw new Error('Failed to fetch')
+        throw new Error('Failed to fetch data')
       }
 
       const [usersData, metricsData, logsData] = await Promise.all([
@@ -89,77 +89,82 @@ export default function AdminDashboard() {
         logsRes.json(),
       ])
 
-      setUsers(Array.isArray(usersData) ? usersData : [])
+      setUsers(usersData)
       setMetrics(metricsData)
-      setLogs(Array.isArray(logsData) ? logsData.slice(0, 50) : [])
-      setError(null)
+      setLogs(logsData)
     } catch (err) {
-      setError('Failed to load dashboard data. Please try again.')
-      console.error(err)
+      setError(err instanceof Error ? err.message : 'An error occurred')
+      toast.error('Failed to load dashboard data')
     } finally {
       setLoading(false)
     }
   }, [])
 
   useEffect(() => {
-    if (status === 'authenticated') fetchData()
+    if (status === 'authenticated') {
+      fetchData()
+      const interval = setInterval(fetchData, 30000)
+      return () => clearInterval(interval)
+    }
   }, [status, fetchData])
 
-  const filteredUsers = useMemo(() => {
-    let filtered = users.filter(
-      (u) =>
-        (!search || u.fullName.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase())) &&
-        (!roleFilter || roleFilter === 'all' || u.role === roleFilter) &&
-        (statusFilter === 'all' || u.status === statusFilter)
-    )
-
-    return filtered.sort((a, b) => {
-      return (a.fullName || '').localeCompare(b.fullName || '')
-    })
-  }, [users, search, roleFilter, statusFilter])
-
-  const roleCounts = useMemo(() => {
-    return roles.reduce((acc, r) => {
-      acc[r] = users.filter((u) => u.role === r).length
-      return acc
-    }, {} as Record<Role, number>)
-  }, [users])
-
-  const updateUserRole = async (id: string, newRole: Role) => {
+  // Actions
+  const updateUserRole = async (userId: string, newRole: string) => {
     try {
-      const res = await fetch(`/api/users/${id}/role`, {
+      const res = await fetch(`/api/admin/users/${userId}/role`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ role: newRole }),
       })
+
       if (!res.ok) throw new Error()
-      setSuccess(`User role updated to ${newRole}`)
-      setTimeout(() => setSuccess(null), 3000)
+      toast.success('Role updated successfully')
       fetchData()
     } catch {
-      setError('Failed to update user role.')
+      toast.error('Failed to update user role')
     }
   }
 
-  const deleteUser = async (id: string) => {
+  const deleteUser = async (userId: string) => {
     try {
-      const res = await fetch(`/api/users/${id}`, { method: 'DELETE' })
+      const res = await fetch(`/api/admin/users/${userId}`, {
+        method: 'DELETE',
+      })
+
       if (!res.ok) throw new Error()
-      setSuccess('User deleted successfully')
-      setTimeout(() => setSuccess(null), 3000)
-      setDeleteUserId(null)
+      toast.success('User deleted successfully')
+      setDeleteConfirm(null)
       fetchData()
     } catch {
-      setError('Failed to delete user.')
+      toast.error('Failed to delete user')
+    }
+  }
+
+  const toggleUserStatus = async (userId: string, currentStatus: string) => {
+    const newStatus = currentStatus === 'active' ? 'inactive' : 'active'
+    try {
+      const res = await fetch(`/api/admin/users/${userId}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      })
+
+      if (!res.ok) throw new Error()
+      toast.success(`User ${newStatus}`)
+      fetchData()
+    } catch {
+      toast.error('Failed to update user status')
     }
   }
 
   const exportUsers = () => {
     const csv = [
-      ['Name', 'Email', 'Role', 'Status'].join(','),
-      ...filteredUsers.map(u => [u.fullName, u.email, u.role, u.status || 'active'].join(',')),
+      ['Name', 'Email', 'Role', 'Status', 'Created'].join(','),
+      ...filteredUsers.map(u =>
+        [u.fullName, u.email, u.role, u.status, new Date(u.createdAt).toLocaleDateString()].join(',')
+      ),
     ].join('\n')
-    
+
     const blob = new Blob([csv], { type: 'text/csv' })
     const url = window.URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -168,191 +173,328 @@ export default function AdminDashboard() {
     a.click()
   }
 
-  const clearFilters = () => {
-    setSearch('')
-    setRoleFilter('all')
-    setStatusFilter('all')
-  }
+  // Filtering & Sorting
+  const filteredUsers = useMemo(() => {
+    let result = users
 
-  if (status === 'loading' || loading)
+    if (searchQuery) {
+      result = result.filter(u =>
+        u.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        u.email.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    }
+
+    if (roleFilter !== 'all') {
+      result = result.filter(u => u.role === roleFilter)
+    }
+
+    if (statusFilter !== 'all') {
+      result = result.filter(u => u.status === statusFilter)
+    }
+
+    return result.sort((a, b) => {
+      if (sortBy === 'name') return a.fullName.localeCompare(b.fullName)
+      if (sortBy === 'email') return a.email.localeCompare(b.email)
+      if (sortBy === 'created') return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      return 0
+    })
+  }, [users, searchQuery, roleFilter, statusFilter, sortBy])
+
+  const roleStats = useMemo(() => {
+    const stats: Record<string, number> = {}
+    users.forEach(u => {
+      stats[u.role] = (stats[u.role] || 0) + 1
+    })
+    return stats
+  }, [users])
+
+  if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-700 font-medium">Loading dashboard</p>
+          <div className="inline-block p-4 rounded-full bg-white/10 mb-4">
+            <Activity className="w-8 h-8 text-blue-400 animate-spin" />
+          </div>
+          <p className="text-white font-semibold text-lg">Loading Dashboard</p>
+          <p className="text-slate-400 text-sm mt-2">Initializing admin panel...</p>
         </div>
       </div>
     )
+  }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              Admin Dashboard
-            </h1>
-            <p className="text-gray-600 mt-2">Manage users, appointments, and system activity</p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white overflow-hidden">
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside
+        className={`fixed left-0 top-0 h-screen w-64 bg-slate-800/80 backdrop-blur-xl border-r border-white/10 transform transition-transform duration-300 z-40 lg:translate-x-0 overflow-y-auto ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        <div className="p-6">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="p-2 bg-blue-600 rounded-lg">
+              <BarChart3 className="w-6 h-6" />
+            </div>
+            <h1 className="text-xl font-bold">Admin Panel</h1>
           </div>
-          <button
-            onClick={() => signOut({ callbackUrl: '/login' })}
-            className="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-lg font-medium transition-all shadow-lg hover:shadow-xl"
-          >
-            Logout
-          </button>
-        </header>
-        {error && (
-          <Alert type="error" message={error} onClose={() => setError(null)} />
-        )}
-        {success && (
-          <Alert type="success" message={success} onClose={() => setSuccess(null)} />
-        )}
-        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <MetricCard 
-            title="Total Users" 
-            value={metrics.users} 
-            icon={<Users className="w-6 h-6" />}
-          />
-          <MetricCard 
-            title="Appointments" 
-            value={metrics.appointments} 
-            icon={<Calendar className="w-6 h-6" />}
-          />
-          <MetricCard 
-            title="Prescriptions" 
-            value={metrics.prescriptions} 
-            icon={<Pill className="w-6 h-6" />}
-          />
-          <MetricCard 
-            title="Today's Visits" 
-            value={metrics.todayAppointments} 
-            icon={<Activity className="w-6 h-6" />}
-          />
-        </section>
-        <div className="flex gap-4 border-b border-gray-200">
-          {(['users', 'logs'] as const).map((tab) => (
+
+          <nav className="space-y-2">
+            {[
+              { id: 'overview', label: 'Overview', icon: TrendingUp },
+              { id: 'users', label: 'Users', icon: Users },
+              { id: 'logs', label: 'Audit Logs', icon: Activity },
+            ].map(item => {
+              const Icon = item.icon
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setActiveTab(item.id as any)
+                    setSidebarOpen(false)
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                    activeTab === item.id
+                      ? 'bg-blue-600/20 text-blue-300 border border-blue-500/30'
+                      : 'text-slate-300 hover:bg-white/5'
+                  }`}
+                >
+                  <Icon className="w-5 h-5" />
+                  <span className="font-medium">{item.label}</span>
+                </button>
+              )
+            })}
+          </nav>
+
+          <div className="absolute bottom-6 left-6 right-6 space-y-3">
             <button
-              key={tab}
-              onClick={() => setActiveTab(tab as any)}
-              className={`pb-3 px-1 font-medium transition-colors capitalize ${
-                activeTab === tab
-                  ? 'text-blue-600 border-b-2 border-blue-600'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
+              onClick={() => signOut({ callbackUrl: '/login' })}
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-600/20 hover:bg-red-600/30 text-red-300 rounded-lg transition-all border border-red-500/20"
             >
-              {tab === 'users' ? 'Users' : 'Audit Logs'}
+              <LogOut className="w-5 h-5" />
+              Logout
             </button>
-          ))}
+          </div>
         </div>
-        {activeTab === 'users' && (
-          <section className="bg-white rounded-2xl shadow-lg overflow-hidden">
-            <div className="p-6 space-y-6">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h2 className="text-2xl font-bold text-gray-900">User Management</h2>
-                <div className="flex gap-2">
+      </aside>
+
+      {/* Main Content */}
+      <main className="lg:ml-64 min-h-screen flex flex-col">
+        {/* Top Bar */}
+        <header className="sticky top-0 z-20 bg-slate-800/40 backdrop-blur-xl border-b border-white/10 px-6 py-4">
+          <div className="flex items-center justify-between gap-4">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="lg:hidden p-2 hover:bg-white/10 rounded-lg transition-all"
+            >
+              {sidebarOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
+            </button>
+
+            <div className="flex-1 hidden sm:flex">
+              <div className="relative w-full max-w-sm">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Quick search..."
+                  value={searchQuery}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-blue-500/50 focus:bg-white/20 transition-all"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-slate-300">{session?.user?.email}</span>
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center font-bold">
+                {session?.user?.email?.charAt(0).toUpperCase()}
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Content Area */}
+        <div className="flex-1 overflow-auto p-6 space-y-6">
+          {error && (
+            <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-400" />
+              <p className="text-red-200">{error}</p>
+            </div>
+          )}
+
+          {/* Overview Tab */}
+          {activeTab === 'overview' && metrics && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-max">
+                <StatCard
+                  label="Total Users"
+                  value={metrics.totalUsers}
+                  icon={<Users className="w-6 h-6" />}
+                  color="from-blue-500 to-blue-600"
+                />
+                <StatCard
+                  label="Total Appointments"
+                  value={metrics.totalAppointments}
+                  icon={<Calendar className="w-6 h-6" />}
+                  color="from-purple-500 to-purple-600"
+                />
+                <StatCard
+                  label="Total Prescriptions"
+                  value={metrics.totalPrescriptions}
+                  icon={<Pill className="w-6 h-6" />}
+                  color="from-orange-500 to-orange-600"
+                />
+                <StatCard
+                  label="Today's Appointments"
+                  value={metrics.todayAppointments}
+                  icon={<Activity className="w-6 h-6" />}
+                  color="from-green-500 to-green-600"
+                />
+              </div>
+
+              {/* Role Distribution */}
+              <div className="bg-slate-800/30 backdrop-blur border border-white/10 rounded-xl p-6">
+                <h3 className="text-lg font-semibold mb-6">User Distribution by Role</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {Object.entries(roleStats).map(([role, count]) => (
+                    <div key={role} className="p-4 bg-white/5 border border-white/10 rounded-lg">
+                      <p className="text-sm text-slate-300 capitalize mb-1">{role}</p>
+                      <p className="text-2xl font-bold">{count}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Users Tab */}
+          {activeTab === 'users' && (
+            <div className="space-y-6">
+              {/* Filters */}
+              <div className="bg-slate-800/30 backdrop-blur border border-white/10 rounded-xl p-6">
+                <div className="flex flex-col sm:flex-row gap-4 flex-wrap">
+                  <input
+                    type="text"
+                    placeholder="Search users..."
+                    value={searchQuery}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+                    className="flex-1 min-w-48 px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-blue-500/50"
+                  />
+
+                  <select
+                    value={roleFilter}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setRoleFilter(e.target.value)}
+                    className="px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-blue-500/50"
+                  >
+                    <option value="all">All Roles</option>
+                    <option value="admin">Admin</option>
+                    <option value="doctor">Doctor</option>
+                    <option value="nurse">Nurse</option>
+                    <option value="pharmacist">Pharmacist</option>
+                    <option value="lab_technician">Lab Tech</option>
+                    <option value="receptionist">Receptionist</option>
+                  </select>
+
+                  <select
+                    value={statusFilter}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setStatusFilter(e.target.value)}
+                    className="px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-blue-500/50"
+                  >
+                    <option value="all">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                  </select>
+
+                  <select
+                    value={sortBy}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSortBy(e.target.value)}
+                    className="px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-blue-500/50"
+                  >
+                    <option value="name">Sort by Name</option>
+                    <option value="email">Sort by Email</option>
+                    <option value="created">Sort by Created</option>
+                  </select>
+
                   <button
                     onClick={exportUsers}
-                    className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-all"
+                    className="px-4 py-2 bg-green-600/20 hover:bg-green-600/30 text-green-300 border border-green-500/20 rounded-lg transition-all flex items-center gap-2"
                   >
-                    <Download size={18} />
+                    <Download className="w-4 h-4" />
                     Export
                   </button>
-                  <button
-                    onClick={clearFilters}
-                    className="flex items-center gap-2 bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg font-medium transition-all"
-                  >
-                    <X size={18} />
-                    Clear Filters
-                  </button>
                 </div>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 p-4 bg-gray-50 rounded-xl">
-                <SearchInput
-                  placeholder="Search by name or email"
-                  value={search}
-                  onChange={setSearch}
-                  icon={<Search size={18} />}
-                />
-                <FilterSelect
-                  label="Role"
-                  value={roleFilter}
-                  onChange={(v) => setRoleFilter(v as Role | 'all')}
-                  options={[{ label: 'All Roles', value: 'all' }, ...roles.map(r => ({ label: r, value: r }))]}
-                />
-                <FilterSelect
-                  label="Status"
-                  value={statusFilter}
-                  onChange={(v) => setStatusFilter(v as any)}
-                  options={[
-                    { label: 'All', value: 'all' },
-                    { label: 'Active', value: 'active' },
-                    { label: 'Inactive', value: 'inactive' },
-                  ]}
-                />
-              </div>
-              <div className="flex flex-wrap gap-3 text-sm">
-                <span className="font-semibold text-gray-900">
+                <p className="text-sm text-slate-400 mt-4">
                   Showing {filteredUsers.length} of {users.length} users
-                </span>
-                <span className="text-gray-600">|</span>
-                {roles.map((r) => (
-                  <span key={r} className="text-gray-700">
-                    <span className="font-medium">{r}:</span> {roleCounts[r]}
-                  </span>
-                ))}
+                </p>
               </div>
-              {filteredUsers.length === 0 ? (
-                <div className="text-center py-12">
-                  <AlertCircle size={48} className="mx-auto text-gray-400 mb-4" />
-                  <p className="text-gray-600 font-medium">No users found</p>
-                  <p className="text-gray-500 text-sm mt-1">Try adjusting your filters</p>
-                </div>
-              ) : (
+
+              {/* Users Table */}
+              <div className="bg-slate-800/30 backdrop-blur border border-white/10 rounded-xl overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="bg-gray-50 border-b border-gray-200">
-                        {['Name', 'Email', 'Role', 'Status', 'Actions'].map((h) => (
-                          <th
-                            key={h}
-                            className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
-                          >
-                            {h}
-                          </th>
-                        ))}
+                      <tr className="bg-slate-700/50 border-b border-white/10">
+                        <th className="px-6 py-4 text-left text-sm font-semibold text-slate-300">Name</th>
+                        <th className="px-6 py-4 text-left text-sm font-semibold text-slate-300">Email</th>
+                        <th className="px-6 py-4 text-left text-sm font-semibold text-slate-300">Role</th>
+                        <th className="px-6 py-4 text-left text-sm font-semibold text-slate-300">Status</th>
+                        <th className="px-6 py-4 text-left text-sm font-semibold text-slate-300">Created</th>
+                        <th className="px-6 py-4 text-left text-sm font-semibold text-slate-300">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200">
-                      {filteredUsers.map((user) => (
-                        <tr key={user._id} className="hover:bg-gray-50 transition-colors">
-                          <td className="px-6 py-4 font-medium text-gray-900">{user.fullName}</td>
-                          <td className="px-6 py-4 text-gray-600">{user.email}</td>
+                    <tbody className="divide-y divide-white/5">
+                      {filteredUsers.map(user => (
+                        <tr key={user._id} className="hover:bg-white/5 transition-colors">
+                          <td className="px-6 py-4 text-white font-medium">{user.fullName}</td>
+                          <td className="px-6 py-4 text-slate-300 text-sm">{user.email}</td>
                           <td className="px-6 py-4">
                             <select
                               value={user.role}
-                              onChange={(e) => updateUserRole(user._id, e.target.value as Role)}
-                              className="border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                                updateUserRole(user._id, e.target.value)
+                              }
+                              className="px-3 py-1 bg-white/10 border border-white/20 rounded text-white text-sm focus:outline-none focus:border-blue-500/50"
                             >
-                              {roles.map((r) => (
-                                <option key={r} value={r}>{r}</option>
-                              ))}
+                              <option>admin</option>
+                              <option>doctor</option>
+                              <option>nurse</option>
+                              <option>pharmacist</option>
+                              <option>lab_technician</option>
+                              <option>receptionist</option>
+                              <option>patient</option>
                             </select>
                           </td>
                           <td className="px-6 py-4">
-                            <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                              (user.status || 'active') === 'active'
-                                ? 'bg-green-100 text-green-700'
-                                : 'bg-gray-100 text-gray-700'
-                            }`}>
-                              {user.status || 'active'}
-                            </span>
+                            <button
+                              onClick={() => toggleUserStatus(user._id, user.status)}
+                              className={`px-3 py-1 rounded text-sm font-medium transition-all ${
+                                user.status === 'active'
+                                  ? 'bg-green-500/20 text-green-300'
+                                  : 'bg-slate-500/20 text-slate-300'
+                              }`}
+                            >
+                              {user.status}
+                            </button>
+                          </td>
+                          <td className="px-6 py-4 text-slate-300 text-sm">
+                            {new Date(user.createdAt).toLocaleDateString()}
                           </td>
                           <td className="px-6 py-4">
                             <button
-                              onClick={() => setDeleteUserId(user._id)}
-                              className="text-red-600 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-all"
+                              onClick={() => setDeleteConfirm(user._id)}
+                              className="p-2 hover:bg-red-500/20 text-red-400 rounded transition-all"
                             >
-                              <Trash2 size={18} />
+                              <Trash2 className="w-4 h-4" />
                             </button>
                           </td>
                         </tr>
@@ -360,197 +502,82 @@ export default function AdminDashboard() {
                     </tbody>
                   </table>
                 </div>
-              )}
+              </div>
             </div>
-          </section>
-        )}
-        {activeTab === 'logs' && (
-          <section className="bg-white rounded-2xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Audit Logs</h2>
-            {logs.length === 0 ? (
-              <div className="text-center py-12">
-                <AlertCircle size={48} className="mx-auto text-gray-400 mb-4" />
-                <p className="text-gray-600 font-medium">No audit logs available</p>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {logs.map((l, i) => (
-                  <div
-                    key={i}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border border-gray-200"
-                  >
-                    <div className="flex-1">
-                      <p className="font-semibold text-gray-900">{l.action}</p>
-                      <p className="text-sm text-gray-600 mt-1">
-                        By <span className="font-medium">{l.actorEmail}</span>
-                        {l.type && ` • ${l.type}`}
-                      </p>
+          )}
+
+          {/* Logs Tab */}
+          {activeTab === 'logs' && (
+            <div className="space-y-6">
+              <div className="bg-slate-800/30 backdrop-blur border border-white/10 rounded-xl overflow-hidden">
+                <div className="max-h-96 overflow-y-auto">
+                  {logs.map(log => (
+                    <div
+                      key={log._id}
+                      className="p-4 border-b border-white/5 hover:bg-white/5 transition-colors last:border-0"
+                    >
+                      <div className="flex items-start justify-between gap-4 flex-wrap">
+                        <div className="flex-1">
+                          <p className="font-medium text-white">{log.action}</p>
+                          <p className="text-sm text-slate-400">
+                            {log.actorEmail} • {log.resource}
+                          </p>
+                        </div>
+                        <p className="text-sm text-slate-500 whitespace-nowrap">
+                          {new Date(log.timestamp).toLocaleString()}
+                        </p>
+                      </div>
                     </div>
-                    <p className="text-sm text-gray-500 whitespace-nowrap">
-                      {new Date(l.timestamp).toLocaleString()}
-                    </p>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            )}
-          </section>
-        )}
-      </div>
-      {deleteUserId && (
-        <Modal
-          title="Delete User"
-          message="Are you sure you want to delete this user? This action cannot be undone."
-          onConfirm={() => deleteUser(deleteUserId)}
-          onCancel={() => setDeleteUserId(null)}
-          isDangerous
-        />
+            </div>
+          )}
+        </div>
+      </main>
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-slate-800 border border-white/10 rounded-xl p-6 max-w-sm w-full">
+            <h3 className="text-xl font-bold text-white mb-2">Delete User</h3>
+            <p className="text-slate-300 mb-6">
+              Are you sure you want to delete this user? This action cannot be undone.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setDeleteConfirm(null)}
+                className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => deleteUser(deleteConfirm)}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
       )}
-    </main>
+    </div>
   )
 }
 
-const MetricCard = ({ 
-  title, 
-  value,
-  icon
-}: { 
-  title: string
+const StatCard = ({ label, value, icon, color }: {
+  label: string
   value: number
   icon: React.ReactNode
+  color: string
 }) => (
-  <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all border border-gray-100">
+  <div className={`bg-gradient-to-br ${color} bg-opacity-10 backdrop-blur border border-white/10 rounded-xl p-6 hover:border-white/20 transition-all h-full`}>
     <div className="flex items-start justify-between mb-4">
-      <div>
-        <p className="text-gray-600 font-medium text-sm">{title}</p>
-        <p className="text-4xl font-bold text-gray-900 mt-2">{value}</p>
-      </div>
-      <div className="text-blue-500 opacity-30">
-        {icon}
+      <div className="p-3 bg-white/10 rounded-lg">
+        <div className="text-white opacity-80">{icon}</div>
       </div>
     </div>
-  </div>
-)
-
-const SearchInput = ({
-  placeholder,
-  value,
-  onChange,
-  icon,
-}: {
-  placeholder: string
-  value: string
-  onChange: (v: string) => void
-  icon?: React.ReactNode
-}) => (
-  <div className="relative">
-    {icon && <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">{icon}</div>}
-    <input
-      type="text"
-      placeholder={placeholder}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className={`w-full px-4 py-2 ${icon ? 'pl-10' : ''} border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white`}
-    />
-  </div>
-)
-
-const FilterSelect = ({
-  label,
-  value,
-  onChange,
-  options,
-}: {
-  label: string
-  value: string
-  onChange: (v: string) => void
-  options: Array<{ label: string; value: string }>
-}) => (
-  <div>
-    <label className="text-xs font-semibold text-gray-600 uppercase mb-1 block">{label}</label>
-    <select
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white appearance-none cursor-pointer"
-    >
-      {options.map((opt) => (
-        <option key={opt.value} value={opt.value}>{opt.label}</option>
-      ))}
-    </select>
-  </div>
-)
-
-const Alert = ({ 
-  type, 
-  message, 
-  onClose 
-}: { 
-  type: 'error' | 'success'
-  message: string
-  onClose: () => void
-}) => (
-  <div className={`p-4 rounded-lg flex items-center justify-between gap-4 ${
-    type === 'error' 
-      ? 'bg-red-50 border border-red-200' 
-      : 'bg-green-50 border border-green-200'
-  }`}>
-    <div className="flex items-center gap-3">
-      <div className={`w-5 h-5 rounded-full flex items-center justify-center font-bold text-white ${
-        type === 'error' ? 'bg-red-500' : 'bg-green-500'
-      }`}>
-        {type === 'error' ? '!' : '✓'}
-      </div>
-      <p className={`font-medium ${
-        type === 'error' ? 'text-red-700' : 'text-green-700'
-      }`}>
-        {message}
-      </p>
-    </div>
-    <button
-      onClick={onClose}
-      className={`text-lg font-bold ${
-        type === 'error' ? 'text-red-500 hover:text-red-700' : 'text-green-500 hover:text-green-700'
-      }`}
-    >
-      ×
-    </button>
-  </div>
-)
-
-const Modal = ({
-  title,
-  message,
-  onConfirm,
-  onCancel,
-  isDangerous,
-}: {
-  title: string
-  message: string
-  onConfirm: () => void
-  onCancel: () => void
-  isDangerous?: boolean
-}) => (
-  <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-    <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6">
-      <h3 className="text-xl font-bold text-gray-900 mb-2">{title}</h3>
-      <p className="text-gray-600 mb-6">{message}</p>
-      <div className="flex gap-3 justify-end">
-        <button
-          onClick={onCancel}
-          className="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-lg font-medium transition-colors"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={onConfirm}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors text-white ${
-            isDangerous
-              ? 'bg-red-600 hover:bg-red-700'
-              : 'bg-blue-600 hover:bg-blue-700'
-          }`}
-        >
-          {isDangerous ? 'Delete' : 'Confirm'}
-        </button>
-      </div>
-    </div>
+    <p className="text-slate-300 text-sm font-medium mb-1">{label}</p>
+    <p className="text-3xl font-bold text-white">{value}</p>
   </div>
 )

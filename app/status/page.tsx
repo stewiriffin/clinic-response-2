@@ -102,7 +102,7 @@ export default function CheckStatus() {
     }, 1200)
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && fullName.trim() && phone.length === 10 && !isLoading) {
       handleCheck()
     }
@@ -199,7 +199,7 @@ export default function CheckStatus() {
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    onKeyDown={handleKeyDown}
+                    onKeyPress={handleKeyPress}
                     placeholder="John Doe"
                     className="w-full px-4 py-3.5 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-200 hover:bg-slate-800/70"
                     aria-required="true"
@@ -220,7 +220,7 @@ export default function CheckStatus() {
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(formatPhone(e.target.value))}
-                    onKeyDown={handleKeyDown}
+                    onKeyPress={handleKeyPress}
                     maxLength={10}
                     placeholder="0712345678"
                     className="w-full px-4 py-3.5 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 transition-all duration-200 hover:bg-slate-800/70"

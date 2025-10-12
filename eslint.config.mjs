@@ -1,4 +1,3 @@
-// eslint.config.mjs
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { FlatCompat } from '@eslint/eslintrc'
@@ -11,14 +10,14 @@ const compat = new FlatCompat({
 })
 
 const eslintConfig = [
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
+  ...compat.extends(['next/core-web-vitals', 'next/typescript']),
   {
     files: ['**/*.{js,ts,jsx,tsx}'],
     rules: {
       '@typescript-eslint/no-unused-vars': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unsafe-function-type': 'off',
-      '@typescript-eslint/no-empty-object-type': 'off', // ✅ add this line
+      '@typescript-eslint/no-empty-object-type': 'off',
       'prefer-const': 'off',
       'react-hooks/exhaustive-deps': 'off',
       'react/no-unescaped-entities': 'off',

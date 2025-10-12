@@ -1,15 +1,18 @@
 // app/layout.tsx
-'use client'
-
 import './globals.css'
-import { SessionProvider } from 'next-auth/react'
+import { Providers } from './providers'
 import { ReactNode } from 'react'
+
+export const metadata = {
+  title: 'First Response Clinic',
+  description: 'Healthcare Management System',
+}
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang='en'>
+    <html lang="en">
       <body>
-        <SessionProvider>{children}</SessionProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   )

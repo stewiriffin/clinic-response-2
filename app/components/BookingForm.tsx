@@ -32,7 +32,9 @@ export default function BookingForm() {
       }
 
       setSuccessMsg(
-        `Booking successful! Queue Number: ${data.data.queueNumber}`
+        data?.data?.queueNumber
+          ? `Booking successful! Queue Number: ${data.data.queueNumber}`
+          : 'Booking successful!'
       )
     } catch (err) {
       setError('Booking failed, please try again.')

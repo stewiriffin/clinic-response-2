@@ -5,7 +5,6 @@ export interface IUser extends Document {
   email: string
   password: string
   role:
-    | 'Admin'
     | 'Doctor'
     | 'Nurse'
     | 'Pharmacist'
@@ -30,7 +29,6 @@ const UserSchema: Schema<IUser> = new Schema({
   role: {
     type: String,
     enum: [
-      'Admin',
       'Doctor',
       'Nurse',
       'Pharmacist',
@@ -59,6 +57,10 @@ UserSchema.methods.comparePassword = async function (
 ): Promise<boolean> {
   return bcrypt.compare(candidatePassword, this.password)
 }
+
+// 🚀 Performance indexes for frequently queried fields
+// Note: email index is automatically created by unique: true
+UserSchema.index({ role: 1 }) // Filter by role
 
 // 📦 Export model
 const User: Model<IUser> =

@@ -139,14 +139,15 @@ export default function BookPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-blue-600 to-cyan-500 flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-blue-600 to-cyan-500 flex flex-col relative overflow-hidden">
       <div className="absolute inset-0 bg-black opacity-10"></div>
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-72 h-72 bg-white opacity-5 rounded-full blur-3xl animate-float"></div>
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-white opacity-5 rounded-full blur-3xl animate-float-delayed"></div>
       </div>
-      
-      <main className="relative max-w-lg w-full bg-white rounded-2xl shadow-2xl p-6 sm:p-8 animate-fadeIn">
+
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-6 pt-24 pb-8">
+        <main className="relative max-w-lg w-full bg-white rounded-2xl shadow-2xl p-6 sm:p-8 animate-fadeIn">
         <div className="text-center mb-6">
           <div className="inline-block p-3 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full mb-3 shadow-lg animate-bounce-slow">
             <span className="text-3xl">🏥</span>
@@ -311,7 +312,8 @@ export default function BookPage() {
           <span className="mr-1">🔒</span>
           Your information is secure and confidential
         </p>
-      </main>
+        </main>
+      </div>
 
       <style jsx>{`
         @keyframes fadeIn {

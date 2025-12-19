@@ -113,7 +113,7 @@ export default function CheckStatus() {
   const isFormValid = fullName.trim() && phone.length === 10
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-gradient-to-br from-slate-950 via-purple-950 to-slate-900">
+    <div className="min-h-screen flex flex-col relative overflow-hidden bg-gradient-to-br from-slate-950 via-purple-950 to-slate-900">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/20 via-transparent to-transparent"></div>
       
       <div className="absolute inset-0 opacity-30">
@@ -167,8 +167,9 @@ export default function CheckStatus() {
         </div>
       )}
 
-      <div className="relative w-full max-w-md z-10">
-        <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-3xl opacity-75 blur-xl animate-pulse-slow"></div>
+      <div className="flex-1 flex items-center justify-center p-4 pt-24 pb-8">
+        <div className="relative w-full max-w-md z-10">
+          <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-3xl opacity-75 blur-xl animate-pulse-slow"></div>
         
         <div className="relative bg-slate-900/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-slate-700/50 overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent"></div>
@@ -316,6 +317,7 @@ export default function CheckStatus() {
               </div>
             )}
           </div>
+        </div>
         </div>
       </div>
 

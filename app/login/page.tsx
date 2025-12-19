@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState, useRef } from 'react'
 import { signIn, useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Eye, EyeOff, Loader2, AlertCircle, CheckCircle2, ArrowRight, Shield } from 'lucide-react'
+import { Eye, EyeOff, Loader2, AlertCircle, CheckCircle2, ArrowRight, Heart } from 'lucide-react'
 
 const roleRoutes: Record<string, string> = {
   admin: '/admin/dashboard',
@@ -184,7 +184,7 @@ export default function LoginPage() {
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-16">
             <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg">
-              <Shield className="w-7 h-7 text-blue-600" />
+              <Heart className="w-7 h-7 text-blue-600" />
             </div>
             <span className="text-2xl font-bold text-white">First Response</span>
           </div>
@@ -218,7 +218,7 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           <div className="lg:hidden flex items-center gap-3 mb-8">
             <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg flex items-center justify-center shadow">
-              <Shield className="w-6 h-6 text-white" />
+              <Heart className="w-6 h-6 text-white" />
             </div>
             <span className="text-xl font-bold text-gray-900">First Response</span>
           </div>

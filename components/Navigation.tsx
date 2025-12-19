@@ -8,7 +8,7 @@ import { useState } from 'react'
 import {
   Home, Calendar, Activity, Users, LogOut, Menu, X,
   Stethoscope, Pill, TestTube, ClipboardList, UserCog, LayoutDashboard,
-  ChevronRight
+  ChevronRight, Heart
 } from 'lucide-react'
 
 const roleIcons: Record<string, any> = {
@@ -73,7 +73,7 @@ export function Navigation() {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 group">
-              <Stethoscope className="w-6 h-6 text-blue-400" />
+              <Heart className="w-6 h-6 text-blue-400" />
               <span className="text-lg font-bold text-white hidden sm:inline">
                 First Response
               </span>

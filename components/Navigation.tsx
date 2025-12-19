@@ -49,9 +49,8 @@ export function Navigation() {
   // Public navigation (no session)
   const publicNav = [
     { href: '/', label: 'Home', icon: Home },
-    { href: '/book', label: 'Book Appointment', icon: Calendar },
-    { href: '/status', label: 'Queue Status', icon: Activity },
-    { href: '/login', label: 'Staff Login', icon: LogOut },
+    { href: '/book', label: 'Book', icon: Calendar },
+    { href: '/status', label: 'Status', icon: Activity },
   ]
 
   // Authenticated navigation
@@ -69,15 +68,13 @@ export function Navigation() {
   return (
     <>
       {/* Top Navigation Bar */}
-      <nav className="sticky top-0 z-50 bg-slate-900/95 backdrop-blur-md border-b border-slate-800">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-900/80 backdrop-blur-lg border-b border-slate-800/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-cyan-500/50 transition-shadow">
-                <Stethoscope className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent hidden sm:inline">
+            <Link href="/" className="flex items-center gap-2 group">
+              <Stethoscope className="w-6 h-6 text-blue-400" />
+              <span className="text-lg font-bold text-white hidden sm:inline">
                 First Response
               </span>
             </Link>

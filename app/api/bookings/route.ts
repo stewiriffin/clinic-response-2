@@ -17,7 +17,7 @@ const bookingSchema = z.object({
     .max(100, 'Name must not exceed 100 characters')
     .regex(/^[a-zA-Z\s\-']+$/, 'Name can only contain letters, spaces, hyphens, and apostrophes'),
   phone: z.string()
-    .regex(/^\d{10}$/, 'Phone number must be exactly 10 digits')
+    .regex(/^0[17]\d{8}$/, 'Phone must be 10 digits starting with 07 or 01')
     .refine((val) => val.length === 10, 'Phone number must be 10 digits'),
   email: z.union([
     z.string().email('Invalid email address').max(255, 'Email too long'),

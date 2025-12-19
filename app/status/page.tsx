@@ -184,9 +184,9 @@ export default function CheckStatus() {
                 </div>
               </div>
               <h1 className="text-3xl font-bold text-white mb-2 tracking-tight">
-                Queue Status Check
+                Queue Status
               </h1>
-              <p className="text-slate-400 text-sm">Enter your details to view your queue position</p>
+              <p className="text-slate-400 text-sm">Enter details to check position</p>
             </div>
 
             <div className="space-y-5">
@@ -234,7 +234,7 @@ export default function CheckStatus() {
                 </div>
                 <p id="phone-help" className="flex items-center gap-1.5 text-xs text-slate-500 ml-1">
                   <Zap className="w-3 h-3" aria-hidden="true" />
-                  10-digit Kenyan mobile (07XX or 01XX)
+                  10-digit number (07XX or 01XX)
                 </p>
               </div>
 

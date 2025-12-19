@@ -97,7 +97,7 @@ export default function PatientPortal() {
           <h1 className="text-4xl font-black bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-2">
             Patient Portal
           </h1>
-          <p className="text-slate-400">Track your appointments and view your medical history</p>
+          <p className="text-slate-400">Track your appointments</p>
         </div>
 
         {/* Quick Actions */}
@@ -112,8 +112,8 @@ export default function PatientPortal() {
                   <Calendar className="w-6 h-6" />
                 </div>
                 <div className="text-left">
-                  <h3 className="text-lg font-bold">Book New Appointment</h3>
-                  <p className="text-sm text-blue-100">Schedule your next visit</p>
+                  <h3 className="text-lg font-bold">Book Appointment</h3>
+                  <p className="text-sm text-blue-100">Schedule a visit</p>
                 </div>
               </div>
               <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
@@ -130,8 +130,8 @@ export default function PatientPortal() {
                   <Activity className="w-6 h-6 text-blue-400" />
                 </div>
                 <div className="text-left">
-                  <h3 className="text-lg font-bold">Check Queue Status</h3>
-                  <p className="text-sm text-slate-400">View current wait times</p>
+                  <h3 className="text-lg font-bold">Queue Status</h3>
+                  <p className="text-sm text-slate-400">Check wait times</p>
                 </div>
               </div>
               <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform text-slate-400" />
@@ -197,11 +197,11 @@ export default function PatientPortal() {
         ) : filteredAppointments.length === 0 ? (
           <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-12 text-center">
             <AlertCircle className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-white mb-2">No Appointments Found</h3>
+            <h3 className="text-xl font-bold text-white mb-2">No Appointments</h3>
             <p className="text-slate-400 mb-6">
               {searchPhone || searchName
-                ? 'Try adjusting your search criteria'
-                : 'Book your first appointment to get started'}
+                ? 'Try different search terms'
+                : 'Book an appointment to get started'}
             </p>
             <button
               onClick={() => router.push('/book')}

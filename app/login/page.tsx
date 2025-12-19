@@ -191,7 +191,7 @@ export default function LoginPage() {
 
           <div className="max-w-lg">
             <h1 className="text-5xl font-bold text-white mb-6 leading-tight">
-              Healthcare Management Made Simple
+              Modern Healthcare Management
             </h1>
           </div>
         </div>
@@ -226,7 +226,7 @@ export default function LoginPage() {
           <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8">
             <div className="mb-8">
               <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back</h2>
-              <p className="text-gray-600">Enter your credentials to access your account</p>
+              <p className="text-gray-600">Sign in to your account</p>
             </div>
 
             {successMessage && (
@@ -368,15 +368,15 @@ export default function LoginPage() {
             </form>
 
             <p className="text-center text-sm text-gray-600 mt-6">
-              Don't have an account?{' '}
+              Need an account?{' '}
               <a href="/register" className="font-semibold text-blue-600 hover:text-blue-700 transition-colors">
-                Create account
+                Register
               </a>
             </p>
           </div>
 
           <p className="text-center text-xs text-gray-500 mt-6">
-            Protected by enterprise-grade security
+            Secure authentication
           </p>
         </div>
       </div>

@@ -30,9 +30,9 @@ export default function BookPage() {
 
   useEffect(() => {
     if (!touched.phone || !phone) return
-    const phoneRegex = /^07\d{8}$/
+    const phoneRegex = /^0[17]\d{8}$/
     if (!phoneRegex.test(phone)) {
-      setErrors(prev => ({ ...prev, phone: 'Phone must be 10 digits starting with 07' }))
+      setErrors(prev => ({ ...prev, phone: 'Phone must be 10 digits (07XX or 01XX)' }))
     } else {
       setErrors(prev => {
         const newErrors = { ...prev }

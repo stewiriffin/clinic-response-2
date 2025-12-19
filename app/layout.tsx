@@ -4,6 +4,7 @@ import { Providers } from './providers'
 import { GlobalErrorBoundary } from '@/components/GlobalErrorBoundary'
 import { ConditionalNav } from '@/components/ConditionalNav'
 import { PageWrapper } from '@/components/PageWrapper'
+import { PageLoadingIndicator } from '@/components/PageLoadingIndicator'
 import { ReactNode } from 'react'
 
 export const metadata = {
@@ -17,6 +18,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         <GlobalErrorBoundary>
           <Providers>
+            <PageLoadingIndicator />
             <ConditionalNav />
             <PageWrapper>
               {children}

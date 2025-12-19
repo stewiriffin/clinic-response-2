@@ -18,6 +18,12 @@ const User = mongoose.model('User', UserSchema);
 
 const testUsers = [
   {
+    email: 'admin@clinic.com',
+    password: 'admin123',
+    role: 'Admin',
+    fullName: 'System Administrator'
+  },
+  {
     email: 'doctor@clinic.com',
     password: 'doctor123',
     role: 'Doctor',

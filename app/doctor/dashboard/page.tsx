@@ -83,7 +83,9 @@ export default function DoctorDashboard() {
     try {
       setLoading(true)
       const res = await fetch('/api/appointment')
-      const data = await res.json()
+      const result = await res.json()
+      // Handle both paginated response and plain array for backwards compatibility
+      const data = Array.isArray(result) ? result : (result.data || [])
       setAppointments(data)
 
       if (!isEditing) {
@@ -215,8 +217,9 @@ export default function DoctorDashboard() {
         sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
       }`}>
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-            MediCare
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent flex items-center gap-2">
+            <Stethoscope className="w-7 h-7 text-blue-400" />
+            Doctor Console
           </h1>
           <button
             onClick={() => setSidebarOpen(false)}
@@ -252,7 +255,7 @@ export default function DoctorDashboard() {
       </div>
 
       <div className="lg:ml-64">
-        <div className="sticky top-0 z-30 bg-slate-800/40 backdrop-blur-xl border-b border-white/5 px-6 py-4">
+        <div className="sticky top-0 z-50 bg-slate-800/40 backdrop-blur-xl border-b border-white/5 px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button

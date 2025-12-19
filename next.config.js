@@ -3,6 +3,50 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   reactStrictMode: true,
+
+  // Enable standalone output for Docker deployments (only in production)
+  ...(process.env.NODE_ENV === 'production' && { output: 'standalone' }),
+
+  // Performance optimizations for development
+  swcMinify: true,
+
+  // Reduce memory usage in development
+  ...(process.env.NODE_ENV === 'development' && {
+    webpack: (config) => {
+      config.watchOptions = {
+        poll: 1000,
+        aggregateTimeout: 300,
+      }
+      return config
+    },
+  }),
+
+  // Security headers (also configured in middleware.ts)
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'X-DNS-Prefetch-Control',
+            value: 'on',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
+          },
+        ],
+      },
+    ]
+  },
 }
 
 module.exports = nextConfig

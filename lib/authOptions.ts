@@ -13,6 +13,8 @@ type LeanUser = {
   email: string
   password: string
   role?: string
+  adminRole?: 'SuperAdmin' | 'Moderator' | 'Support'
+  isBanned?: boolean
 }
 
 export const authOptions: AuthOptions = {
@@ -43,11 +45,15 @@ export const authOptions: AuthOptions = {
         const valid = await bcrypt.compare(password, user.password)
         if (!valid) throw new Error('Wrong password')
 
+        // Check if user is banned
+        if (user.isBanned) throw new Error('Account has been banned')
+
         return {
           id: user._id.toString(),
           name: user.fullName || 'User',
           email: user.email,
           role: user.role || role,
+          adminRole: user.adminRole || null,
         }
       },
     }),

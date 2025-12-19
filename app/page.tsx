@@ -2,8 +2,9 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { 
-  Activity, Calendar, Users, Clock, ArrowRight, Sparkles, 
+import { Footer } from '@/components/Footer'
+import {
+  Activity, Calendar, Users, Clock, ArrowRight, Sparkles,
   CheckCircle, Zap, Shield, Stethoscope, Phone, MapPin,
   ChevronRight, Star, TrendingUp
 } from 'lucide-react'
@@ -47,32 +48,8 @@ export default function Home() {
 
       {/* Content */}
       <div className="relative z-10">
-        {/* Header/Logo */}
-        <div className="flex justify-between items-center p-6 md:p-8">
-          <div className="group">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity duration-300"></div>
-            <div className="relative flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-lg flex items-center justify-center">
-                <Stethoscope className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-2xl font-black bg-gradient-to-r from-blue-300 to-cyan-300 bg-clip-text text-transparent">
-                First Response
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <Link href="/login" className="hidden sm:inline-flex px-6 py-2 text-slate-300 hover:text-white transition-colors font-medium">
-              Sign In
-            </Link>
-            <Link href="/book" className="px-6 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 rounded-lg font-semibold transition-all transform hover:scale-105">
-              Get Started
-            </Link>
-          </div>
-        </div>
-
         {/* Hero Section */}
-        <div className="min-h-[calc(100vh-80px)] flex items-center justify-center px-6 py-20">
+        <div className="min-h-screen flex items-center justify-center px-6 py-20 pt-24">
           <div className="max-w-5xl w-full">
             <div className={`text-center transform transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
               {/* Badge */}
@@ -238,53 +215,7 @@ export default function Home() {
         </div>
 
         {/* Footer */}
-        <footer className="px-6 py-12 border-t border-white/10">
-          <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-              <div>
-                <h3 className="font-bold text-lg mb-4">First Response</h3>
-                <p className="text-slate-400 text-sm">Modern healthcare for everyone</p>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-4">Quick Links</h4>
-                <ul className="space-y-2 text-sm text-slate-400">
-                  <li><Link href="/book" className="hover:text-white transition-colors">Book Appointment</Link></li>
-                  <li><Link href="/status" className="hover:text-white transition-colors">Queue Status</Link></li>
-                  <li><Link href="/login" className="hover:text-white transition-colors">Staff Login</Link></li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-4">Services</h4>
-                <ul className="space-y-2 text-sm text-slate-400">
-                  <li><a href="#" className="hover:text-white transition-colors">Consultation</a></li>
-                  <li><a href="#" className="hover:text-white transition-colors">Lab Tests</a></li>
-                  <li><a href="#" className="hover:text-white transition-colors">Prescriptions</a></li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-4">Contact</h4>
-                <div className="space-y-2 text-sm text-slate-400">
-                  <div className="flex items-center gap-2">
-                    <Phone className="w-4 h-4" />
-                    <span>+1 (555) 123-4567</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4" />
-                    <span>123 Medical Ave</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row justify-between items-center text-sm text-slate-400">
-              <p>© 2024 First Response Clinic. All rights reserved.</p>
-              <div className="flex gap-6 mt-4 sm:mt-0">
-                <a href="#" className="hover:text-white transition-colors">Privacy</a>
-                <a href="#" className="hover:text-white transition-colors">Terms</a>
-                <a href="#" className="hover:text-white transition-colors">Security</a>
-              </div>
-            </div>
-          </div>
-        </footer>
+        <Footer />
       </div>
 
       {/* Animations */}

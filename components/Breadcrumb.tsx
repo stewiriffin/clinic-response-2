@@ -64,6 +64,7 @@ function generateBreadcrumbs(pathname: string): BreadcrumbItem[] {
 
   // Map route segments to readable labels
   const labelMap: Record<string, string> = {
+    admin: 'Admin',
     doctor: 'Doctor',
     nurse: 'Nurse',
     pharmacist: 'Pharmacist',

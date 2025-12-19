@@ -2,6 +2,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import twilio from 'twilio'
+import { rateLimit, getClientIdentifier, RateLimitPresets } from '@/lib/rateLimiter'
 
 const client = twilio(
   process.env.TWILIO_ACCOUNT_SID!,
@@ -18,6 +19,14 @@ function formatPhone(phone: string): string {
 
 export async function POST(req: NextRequest) {
   try {
+    // Apply rate limiting to prevent SMS spam
+    const identifier = getClientIdentifier(req)
+    const rateLimitResponse = rateLimit(identifier, RateLimitPresets.NOTIFICATION)
+
+    if (rateLimitResponse) {
+      return rateLimitResponse
+    }
+
     const { to, body } = await req.json()
 
     if (!to || !body) {

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { Footer } from '@/components/Footer'
 import { Search, CheckCircle2, AlertCircle, Loader2, User, Phone, Clock, TrendingUp, Sparkles, Zap, Activity } from 'lucide-react'
 
 interface StatusData {
@@ -384,6 +385,9 @@ export default function CheckStatus() {
           animation-delay: 4s;
         }
       `}</style>
+
+      {/* Footer */}
+      <Footer />
     </div>
   )
 }

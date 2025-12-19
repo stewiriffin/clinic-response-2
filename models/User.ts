@@ -5,12 +5,17 @@ export interface IUser extends Document {
   email: string
   password: string
   role:
+    | 'Admin'
     | 'Doctor'
     | 'Nurse'
     | 'Pharmacist'
     | 'Lab technician'
     | 'Receptionist'
   fullName: string
+  adminRole?: 'SuperAdmin' | 'Moderator' | 'Support' // Admin sub-role for RBAC
+  isBanned?: boolean
+  createdAt: Date
+  updatedAt: Date
   comparePassword(candidatePassword: string): Promise<boolean>
 }
 
@@ -29,6 +34,7 @@ const UserSchema: Schema<IUser> = new Schema({
   role: {
     type: String,
     enum: [
+      'Admin',
       'Doctor',
       'Nurse',
       'Pharmacist',
@@ -41,6 +47,18 @@ const UserSchema: Schema<IUser> = new Schema({
     type: String,
     required: true,
   },
+  adminRole: {
+    type: String,
+    enum: ['SuperAdmin', 'Moderator', 'Support'],
+    required: false,
+    default: null,
+  },
+  isBanned: {
+    type: Boolean,
+    default: false,
+  },
+}, {
+  timestamps: true // Adds createdAt and updatedAt fields
 })
 
 // 🔐 Hash password before saving
@@ -61,6 +79,7 @@ UserSchema.methods.comparePassword = async function (
 // 🚀 Performance indexes for frequently queried fields
 // Note: email index is automatically created by unique: true
 UserSchema.index({ role: 1 }) // Filter by role
+UserSchema.index({ createdAt: -1 }) // Sort and filter by creation date (descending)
 
 // 📦 Export model
 const User: Model<IUser> =

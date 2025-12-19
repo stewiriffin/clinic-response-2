@@ -84,7 +84,9 @@ export default function ReceptionistDashboard() {
     try {
       setLoading(true)
       const res = await fetch('/api/appointment')
-      const data = await res.json()
+      const result = await res.json()
+      // Handle both paginated response and plain array for backwards compatibility
+      const data = Array.isArray(result) ? result : (result.data || [])
       setAppointments(data)
     } catch {
       toast.error('Failed to load appointments')
@@ -210,8 +212,9 @@ export default function ReceptionistDashboard() {
         sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
       }`}>
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-            BookHub
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent flex items-center gap-2">
+            <Users className="w-7 h-7 text-purple-400" />
+            Reception Desk
           </h1>
           <button
             onClick={() => setSidebarOpen(false)}
@@ -246,7 +249,7 @@ export default function ReceptionistDashboard() {
       </div>
 
       <div className="lg:ml-64">
-        <div className="sticky top-0 z-30 bg-slate-800/40 backdrop-blur-xl border-b border-white/5 px-6 py-4">
+        <div className="sticky top-0 z-50 bg-slate-800/40 backdrop-blur-xl border-b border-white/5 px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button

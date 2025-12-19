@@ -53,7 +53,9 @@ export default function PharmacistDashboard() {
     try {
       setLoading(true)
       const res = await fetch('/api/appointment')
-      const data = await res.json()
+      const result = await res.json()
+      // Handle both paginated response and plain array for backwards compatibility
+      const data = Array.isArray(result) ? result : (result.data || [])
       setPrescriptions(data.filter((a: any) => a.prescription))
     } catch {
       toast.error('Failed to load prescriptions')
@@ -287,12 +289,10 @@ export default function PharmacistDashboard() {
         sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
       }`}>
         <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-2">
-            <Pill className="w-6 h-6 text-blue-400" />
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-              PharmHub
-            </h1>
-          </div>
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent flex items-center gap-2">
+            <Pill className="w-7 h-7 text-blue-400" />
+            Pharmacy Station
+          </h1>
           <button
             onClick={() => setSidebarOpen(false)}
             className="lg:hidden p-2 hover:bg-white/10 rounded-lg"
@@ -343,7 +343,7 @@ export default function PharmacistDashboard() {
       </div>
 
       <div className="lg:ml-64">
-        <div className="sticky top-0 z-30 bg-slate-800/40 backdrop-blur-xl border-b border-white/5 px-6 py-4">
+        <div className="sticky top-0 z-50 bg-slate-800/40 backdrop-blur-xl border-b border-white/5 px-6 py-4">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <button

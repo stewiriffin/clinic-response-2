@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { Footer } from '@/components/Footer'
 
 export default function BookPage() {
   const [fullName, setFullName] = useState('')
@@ -368,6 +369,9 @@ export default function BookPage() {
           animation: float-delayed 25s ease-in-out infinite;
         }
       `}</style>
+
+      {/* Footer */}
+      <Footer />
     </div>
   )
 }

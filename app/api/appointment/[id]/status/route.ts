@@ -1,98 +1,34 @@
-export const dynamic = 'force-dynamic'
-
 import { NextRequest, NextResponse } from 'next/server'
 import dbConnect from '@/lib/mongodb'
 import Appointment from '@/models/Appointment'
-import Pusher from 'pusher'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/authOptions'
 
-// Pusher Setup
-const pusher = new Pusher({
-  appId: process.env.PUSHER_APP_ID!,
-  key: process.env.PUSHER_KEY!,
-  secret: process.env.PUSHER_SECRET!,
-  cluster: process.env.PUSHER_CLUSTER!,
-  useTLS: true,
-})
-
-// PATCH = Update appointment (status, diagnosis, doctorNote, etc.)
+/**
+ * PATCH - Update appointment status
+ */
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: Promise<{ params: { id: string } }>
 ) {
+  const { params } = await context
   const { id } = params
 
   try {
-    await dbConnect()
-    const data = await req.json()
-
-    const allowedStatus = ['waiting', 'in-progress', 'done']
-    const updateFields: any = {}
-
-    if (data.status && allowedStatus.includes(data.status)) {
-      updateFields.status = data.status
+    const session = await getServerSession(authOptions)
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    if ('labTest' in data) updateFields.labTest = data.labTest
-    if ('prescription' in data) updateFields.prescription = data.prescription
-    if ('diagnosis' in data) updateFields.diagnosis = data.diagnosis
-    if ('doctorNote' in data) updateFields.doctorNote = data.doctorNote
-    if ('reason' in data) updateFields['patient.reason'] = data.reason
-    if ('doctorType' in data)
-      updateFields['patient.doctorType'] = data.doctorType
+    await dbConnect()
+    const { status } = await req.json()
 
-    const current = await Appointment.findById(id).populate('patient')
-    if (!current) {
+    if (!status || !['waiting', 'in-progress', 'done'].includes(status)) {
       return NextResponse.json(
-        { error: 'Appointment not found' },
-        { status: 404 }
+        { error: 'Invalid status. Must be: waiting, in-progress, or done' },
+        { status: 400 }
       )
     }
-
-    updateFields.queueNumber =
-      updateFields.status !== 'waiting' ? null : current.queueNumber
-
-    const updated = await Appointment.findByIdAndUpdate(id, updateFields, {
-      new: true,
-      runValidators: true,
-    }).populate('patient')
-
-    if (updateFields.status && updateFields.status !== 'waiting') {
-      const waiting = await Appointment.find({ status: 'waiting' }).sort({
-        createdAt: 1,
-      })
-      for (let i = 0; i < waiting.length; i++) {
-        waiting[i].queueNumber = i + 1
-        await waiting[i].save()
-      }
-    }
-
-    await pusher.trigger('appointments', 'status-updated', {
-      _id: updated._id,
-      status: updated.status,
-    })
-
-    return NextResponse.json({
-      message: 'Updated and queue reordered',
-      appointment: updated,
-    })
-  } catch (error) {
-    console.error('PATCH error:', error)
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 }
-    )
-  }
-}
-
-// DELETE = Cancel Appointment
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const { id } = params
-
-  try {
-    await dbConnect()
 
     const appointment = await Appointment.findById(id)
     if (!appointment) {
@@ -102,23 +38,15 @@ export async function DELETE(
       )
     }
 
-    await appointment.deleteOne()
-
-    const waiting = await Appointment.find({ status: 'waiting' }).sort({
-      createdAt: 1,
-    })
-    for (let i = 0; i < waiting.length; i++) {
-      waiting[i].queueNumber = i + 1
-      await waiting[i].save()
-    }
-
-    await pusher.trigger('appointments', 'deleted', { _id: id })
+    appointment.status = status
+    await appointment.save()
 
     return NextResponse.json({
-      message: 'Appointment deleted and queue updated',
+      message: 'Status updated successfully',
+      status: appointment.status
     })
   } catch (error) {
-    console.error('DELETE error:', error)
+    console.error('PATCH /api/appointment/[id]/status error:', error)
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }

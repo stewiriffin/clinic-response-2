@@ -2,11 +2,12 @@
 
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { Footer } from '@/components/Footer'
 import {
   LayoutDashboard, Calendar, Activity, Users, ClipboardList,
   Stethoscope, Pill, TestTube, FileText, Search,
   Heart, Thermometer, Printer, ArrowRight, Shield,
-  LogIn, Home
+  LogIn, Home, UserCog
 } from 'lucide-react'
 
 const publicLinks = [
@@ -48,6 +49,22 @@ const publicLinks = [
 ]
 
 const roleLinks: Record<string, any[]> = {
+  admin: [
+    {
+      title: 'Admin Dashboard',
+      description: 'Manage system and users',
+      href: '/admin/dashboard',
+      icon: UserCog,
+      color: 'from-red-500 to-red-600'
+    },
+    {
+      title: 'User Management',
+      description: 'Manage users and roles',
+      href: '/admin/users',
+      icon: Users,
+      color: 'from-purple-500 to-purple-600'
+    }
+  ],
   doctor: [
     {
       title: 'Doctor Dashboard',
@@ -66,25 +83,11 @@ const roleLinks: Record<string, any[]> = {
   ],
   nurse: [
     {
-      title: 'Nurse Dashboard',
-      description: 'Record vitals and patient notes',
-      href: '/nurse/dashboard',
+      title: 'Clinical Workspace',
+      description: 'Smart dashboard - vitals, triage & patient care',
+      href: '/nurse',
       icon: Heart,
       color: 'from-pink-500 to-rose-500'
-    },
-    {
-      title: 'Nurse Overview',
-      description: 'View quick stats and guidelines',
-      href: '/nurse',
-      icon: ClipboardList,
-      color: 'from-blue-500 to-blue-600'
-    },
-    {
-      title: 'Record Vitals',
-      description: 'Take patient vital signs',
-      href: '/nurse/dashboard',
-      icon: Thermometer,
-      color: 'from-orange-500 to-orange-600'
     }
   ],
   pharmacist: [
@@ -231,6 +234,9 @@ export default function HubPage() {
           </div>
         )}
       </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   )
 }

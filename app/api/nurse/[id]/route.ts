@@ -24,9 +24,12 @@ export async function PATCH(
     const {
       temperature,
       bloodPressure,
+      pulse,
+      oxygen,
       weight,
       height,
       nurseNote,
+      triageRiskLevel,
       readyForDoctor, // 🆕 added
     } = await req.json()
 
@@ -41,9 +44,12 @@ export async function PATCH(
     // Update vitals if present
     if (temperature !== undefined) appointment.temperature = temperature
     if (bloodPressure !== undefined) appointment.bloodPressure = bloodPressure
+    if (pulse !== undefined) appointment.pulse = pulse
+    if (oxygen !== undefined) appointment.oxygen = oxygen
     if (weight !== undefined) appointment.weight = weight
     if (height !== undefined) appointment.height = height
     if (nurseNote !== undefined) appointment.nurseNote = nurseNote
+    if (triageRiskLevel !== undefined) appointment.triageRiskLevel = triageRiskLevel
 
     // ✅ Notify doctor if requested
     if (readyForDoctor === true) {

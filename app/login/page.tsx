@@ -8,7 +8,7 @@ import { Eye, EyeOff, Loader2, AlertCircle, CheckCircle2, ArrowRight, Shield } f
 const roleRoutes: Record<string, string> = {
   admin: '/admin/dashboard',
   doctor: '/doctor/dashboard',
-  nurse: '/nurse/dashboard',
+  nurse: '/nurse',
   pharmacist: '/pharmacist/dashboard',
   receptionist: '/receptionist/dashboard',
   lab_technician: '/lab/dashboard',
@@ -84,7 +84,7 @@ export default function LoginPage() {
   useEffect(() => {
     if (status === 'authenticated' && session?.user?.role && !isLoading) {
       const userRole = String(session.user.role).toLowerCase().replace(/\s+/g, '_')
-      const redirectTo = searchParams?.get('callbackUrl') || roleRoutes[userRole] || roleRoutes['admin']
+      const redirectTo = searchParams?.get('callbackUrl') || roleRoutes[userRole] || '/hub'
       router.push(redirectTo)
     } else if (status === 'authenticated' && !session?.user?.role) {
       setError('User role is missing. Contact administrator.')

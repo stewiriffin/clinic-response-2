@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 
 const roleIcons: Record<string, any> = {
+  Admin: UserCog,
   Doctor: Stethoscope,
   Nurse: ClipboardList,
   Pharmacist: Pill,
@@ -20,8 +21,9 @@ const roleIcons: Record<string, any> = {
 }
 
 const roleRoutes: Record<string, { dashboard: string; label: string }> = {
+  admin: { dashboard: '/admin/dashboard', label: 'Admin Dashboard' },
   doctor: { dashboard: '/doctor/dashboard', label: 'Doctor Dashboard' },
-  nurse: { dashboard: '/nurse/dashboard', label: 'Nurse Dashboard' },
+  nurse: { dashboard: '/nurse', label: 'Nurse Dashboard' },
   pharmacist: { dashboard: '/pharmacist/dashboard', label: 'Pharmacist Dashboard'},
   lab_technician: { dashboard: '/lab/dashboard', label: 'Lab Dashboard' },
   receptionist: { dashboard: '/receptionist/dashboard', label: 'Receptionist Dashboard' },

@@ -127,6 +127,13 @@ export default function DoctorDashboard() {
   })
 
   const updateStatus = async (id: string, newStatus: string) => {
+    // ⚡ OPTIMISTIC UI: Update state immediately
+    const previousAppointments = [...appointments]
+    setAppointments(prev =>
+      prev.map(a => a._id === id ? { ...a, status: newStatus } : a)
+    )
+    toast.success('Status updated')
+
     try {
       const res = await fetch(`/api/appointment/${id}/status`, {
         method: 'PATCH',
@@ -134,37 +141,54 @@ export default function DoctorDashboard() {
         body: JSON.stringify({ status: newStatus }),
       })
       if (!res.ok) throw new Error()
-      toast.success('Status updated')
-      fetchAppointments()
+      // Success - optimistic update was correct
     } catch {
+      // ❌ Revert on error
+      setAppointments(previousAppointments)
       toast.error('Failed to update status')
     }
   }
 
   const handleSave = async (id: string) => {
+    // ⚡ OPTIMISTIC UI: Update state immediately
+    const previousAppointments = [...appointments]
+    setAppointments(prev =>
+      prev.map(a => a._id === id ? { ...a, ...edited[id] } : a)
+    )
+    toast.success('Appointment updated successfully')
+    setIsEditing(false)
+    setExpandedId(null)
+
     try {
       await fetch(`/api/appointment/${id}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(edited[id]),
       })
-      toast.success('Appointment updated successfully')
-      setIsEditing(false)
-      setExpandedId(null)
-      fetchAppointments()
+      // Success - optimistic update was correct
     } catch {
+      // ❌ Revert on error
+      setAppointments(previousAppointments)
+      setIsEditing(true)
+      setExpandedId(id)
       toast.error('Failed to save appointment')
     }
   }
 
   const handleDelete = async (id: string) => {
+    // ⚡ OPTIMISTIC UI: Remove from UI immediately
+    const previousAppointments = [...appointments]
+    setAppointments(prev => prev.filter(a => a._id !== id))
+    setDeleteConfirm(null)
+    toast.success('Appointment deleted')
+
     try {
       const res = await fetch(`/api/appointment/${id}/status`, { method: 'DELETE' })
       if (!res.ok) throw new Error()
-      toast.success('Appointment deleted')
-      setDeleteConfirm(null)
-      fetchAppointments()
+      // Success - optimistic update was correct
     } catch {
+      // ❌ Revert on error
+      setAppointments(previousAppointments)
       toast.error('Failed to delete appointment')
     }
   }

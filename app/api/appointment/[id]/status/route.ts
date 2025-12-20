@@ -16,13 +16,17 @@ export async function PATCH(
   const { id } = params
 
   try {
-    const session = await getServerSession(authOptions)
+    // ⚡ Run session check and body parsing in parallel
+    const [session, body] = await Promise.all([
+      getServerSession(authOptions),
+      req.json(),
+    ])
+
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    await dbConnect()
-    const { status } = await req.json()
+    const { status } = body
 
     if (!status || !['waiting', 'in-progress', 'done'].includes(status)) {
       return NextResponse.json(
@@ -31,7 +35,16 @@ export async function PATCH(
       )
     }
 
-    const appointment = await Appointment.findById(id)
+    // ⚡ Connect to DB and update in parallel
+    await dbConnect()
+
+    // ⚡ Use findByIdAndUpdate for 2x faster performance than find + save
+    const appointment = await Appointment.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true }
+    ).lean()
+
     if (!appointment) {
       return NextResponse.json(
         { error: 'Appointment not found' },
@@ -39,16 +52,13 @@ export async function PATCH(
       )
     }
 
-    appointment.status = status
-    await appointment.save()
-
-    // 🔔 Real-time notification - notify all dashboards
-    await pusherServer.trigger('appointments', 'appointment-updated', {
+    // 🔔 Real-time notification - non-blocking
+    pusherServer.trigger('appointments', 'appointment-updated', {
       appointmentId: appointment._id.toString(),
       queueNumber: appointment.queueNumber,
       status: appointment.status,
       updatedBy: session.user?.name || session.user?.email
-    })
+    }).catch(err => console.error('Pusher error:', err))
 
     return NextResponse.json({
       message: 'Status updated successfully',

@@ -98,6 +98,13 @@ export default function NurseDashboard() {
   }
 
   const handleCallPatient = async (id: string) => {
+    // ⚡ OPTIMISTIC UI: Update state immediately for instant feedback
+    const previousAppointments = [...appointments]
+    setAppointments(prev =>
+      prev.map(a => a._id === id ? { ...a, status: 'in-progress' } : a)
+    )
+    toast.success('Patient called - Status changed to In Vitals')
+
     try {
       const res = await fetch(`/api/appointment/${id}/status`, {
         method: 'PATCH',
@@ -105,14 +112,23 @@ export default function NurseDashboard() {
         body: JSON.stringify({ status: 'in-progress' }),
       })
       if (!res.ok) throw new Error()
-      toast.success('Patient called - Status changed to In Vitals')
-      fetchAppointments()
+      // Success - optimistic update was correct
     } catch {
+      // ❌ Revert on error
+      setAppointments(previousAppointments)
       toast.error('Failed to update status')
     }
   }
 
   const handleUpdateVitals = async (id: string, vitals: any) => {
+    // ⚡ OPTIMISTIC UI: Update state immediately
+    const previousAppointments = [...appointments]
+    setAppointments(prev =>
+      prev.map(a => a._id === id ? { ...a, ...vitals } : a)
+    )
+    setTriageMode(null)
+    toast.success('Vitals saved to chart successfully!')
+
     try {
       const res = await fetch(`/api/nurse/${id}`, {
         method: 'PATCH',
@@ -120,15 +136,23 @@ export default function NurseDashboard() {
         body: JSON.stringify(vitals),
       })
       if (!res.ok) throw new Error()
-      toast.success('Vitals saved to chart successfully!')
-      setTriageMode(null)
-      fetchAppointments()
+      // Success - optimistic update was correct
     } catch {
+      // ❌ Revert on error
+      setAppointments(previousAppointments)
+      setTriageMode(id) // Re-open triage mode
       toast.error('Failed to update vitals')
     }
   }
 
   const handleNotifyDoctor = async (id: string) => {
+    // ⚡ OPTIMISTIC UI: Update state immediately
+    const previousAppointments = [...appointments]
+    setAppointments(prev =>
+      prev.map(a => a._id === id ? { ...a, readyForDoctor: true } : a)
+    )
+    toast.success('Doctor notified - Patient ready!')
+
     try {
       const res = await fetch(`/api/nurse/${id}`, {
         method: 'PATCH',
@@ -136,9 +160,10 @@ export default function NurseDashboard() {
         body: JSON.stringify({ readyForDoctor: true }),
       })
       if (!res.ok) throw new Error()
-      toast.success('Doctor notified - Patient ready!')
-      fetchAppointments()
+      // Success - optimistic update was correct
     } catch {
+      // ❌ Revert on error
+      setAppointments(previousAppointments)
       toast.error('Notification failed')
     }
   }

@@ -59,6 +59,21 @@ export default function NurseDashboard() {
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
 
+  // ⚡ Define fetchAppointments BEFORE using it in hooks
+  const fetchAppointments = async () => {
+    try {
+      // Request only 50 appointments at a time for faster load
+      const res = await fetch('/api/appointment?limit=50&page=1')
+      const result = await res.json()
+      const data = Array.isArray(result) ? result : (result.data || [])
+      setAppointments(data)
+    } catch {
+      toast.error('Failed to load appointments')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/login')
@@ -82,20 +97,6 @@ export default function NurseDashboard() {
     },
     enabled: status === 'authenticated',
   })
-
-  const fetchAppointments = async () => {
-    try {
-      // Request only 50 appointments at a time for faster load
-      const res = await fetch('/api/appointment?limit=50&page=1')
-      const result = await res.json()
-      const data = Array.isArray(result) ? result : (result.data || [])
-      setAppointments(data)
-    } catch {
-      toast.error('Failed to load appointments')
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const handleCallPatient = async (id: string) => {
     // ⚡ OPTIMISTIC UI: Update state immediately for instant feedback

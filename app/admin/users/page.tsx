@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { EnhancedUserTable } from '@/components/admin/EnhancedUserTable'
 import { Search, Filter, RefreshCw, Download } from 'lucide-react'
 import Papa from 'papaparse'
 import { useRealTimeUpdates } from '@/hooks/useRealTimeUpdates'
+import { useDebounce } from '@/hooks/useDebounce'
 
 interface User {
   _id: string
@@ -17,30 +18,15 @@ interface User {
 
 export default function UserManagementPage() {
   const [users, setUsers] = useState<User[]>([])
-  const [filteredUsers, setFilteredUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [roleFilter, setRoleFilter] = useState('all')
 
-  useEffect(() => {
-    fetchUsers()
-  }, [])
+  // ⚡ DEBOUNCE search to prevent filtering spam (wait 300ms after user stops typing)
+  const debouncedSearch = useDebounce(searchQuery, 300)
 
-  // 🔔 Real-time updates: Listen for user changes
-  useRealTimeUpdates({
-    channel: 'users',
-    events: {
-      'user-created': fetchUsers,
-      'user-updated': fetchUsers,
-      'user-deleted': fetchUsers,
-    },
-  })
-
-  useEffect(() => {
-    filterUsers()
-  }, [users, searchQuery, roleFilter])
-
-  const fetchUsers = async () => {
+  // ⚡ MEMOIZE fetchUsers with useCallback to prevent re-renders
+  const fetchUsers = useCallback(async () => {
     setLoading(true)
     try {
       // Request only 100 users at a time for faster load
@@ -56,29 +42,46 @@ export default function UserManagementPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const filterUsers = () => {
+  useEffect(() => {
+    fetchUsers()
+  }, [fetchUsers])
+
+  // 🔔 Real-time updates: Listen for user changes
+  useRealTimeUpdates({
+    channel: 'users',
+    events: {
+      'user-created': fetchUsers,
+      'user-updated': fetchUsers,
+      'user-deleted': fetchUsers,
+    },
+  })
+
+  // ⚡ MEMOIZE filtered users to prevent re-computation on every render
+  const filteredUsers = useMemo(() => {
     let filtered = [...users]
 
-    // Search filter
-    if (searchQuery) {
+    // Apply search filter (using debounced value)
+    if (debouncedSearch) {
+      const query = debouncedSearch.toLowerCase()
       filtered = filtered.filter(
         (user) =>
-          user.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          user.email.toLowerCase().includes(searchQuery.toLowerCase())
+          user.fullName.toLowerCase().includes(query) ||
+          user.email.toLowerCase().includes(query)
       )
     }
 
-    // Role filter
+    // Apply role filter
     if (roleFilter !== 'all') {
       filtered = filtered.filter((user) => user.role === roleFilter)
     }
 
-    setFilteredUsers(filtered)
-  }
+    return filtered
+  }, [users, debouncedSearch, roleFilter])
 
-  const exportToCSV = () => {
+  // ⚡ MEMOIZE exportToCSV with useCallback
+  const exportToCSV = useCallback(() => {
     const csvData = filteredUsers.map((user) => ({
       ID: user._id,
       'Full Name': user.fullName,
@@ -98,7 +101,7 @@ export default function UserManagementPage() {
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
-  }
+  }, [filteredUsers])
 
   const roles = ['Admin', 'Doctor', 'Nurse', 'Pharmacist', 'Lab technician', 'Receptionist']
 

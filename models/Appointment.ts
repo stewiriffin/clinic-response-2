@@ -46,13 +46,16 @@ const AppointmentSchema = new Schema(
   { timestamps: true }
 )
 
-// 🚀 Performance indexes for frequently queried fields
+// 🚀 CRITICAL Performance indexes for frequently queried fields
 AppointmentSchema.index({ queueNumber: 1 }) // Unique queue number lookup
-AppointmentSchema.index({ status: 1 }) // Filter by status
+AppointmentSchema.index({ status: 1 }) // Filter by status (MOST COMMON QUERY)
 AppointmentSchema.index({ patient: 1 }) // Join with patient data
 AppointmentSchema.index({ createdAt: -1 }) // Sort by most recent
-AppointmentSchema.index({ status: 1, createdAt: -1 }) // Compound index for filtered sorting
+AppointmentSchema.index({ status: 1, createdAt: -1 }) // Compound: Filter + Sort (CRITICAL FOR DASHBOARDS)
+AppointmentSchema.index({ status: 1, queueNumber: 1 }) // Compound: Status + Queue (NURSE/DOCTOR QUERIES)
 AppointmentSchema.index({ dispensed: 1, status: 1 }) // Pharmacist queries
+AppointmentSchema.index({ readyForDoctor: 1, status: 1 }) // Doctor dashboard filtering
+AppointmentSchema.index({ patient: 1, status: 1 }) // Patient history queries
 
 export default mongoose.models.Appointment ||
   mongoose.model('Appointment', AppointmentSchema)

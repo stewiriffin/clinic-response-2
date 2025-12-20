@@ -3,6 +3,7 @@ import dbConnect from '@/lib/mongodb'
 import Appointment from '@/models/Appointment'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
+import { pusherServer } from '@/lib/pusher-server'
 
 /**
  * PATCH - Update appointment status
@@ -40,6 +41,14 @@ export async function PATCH(
 
     appointment.status = status
     await appointment.save()
+
+    // 🔔 Real-time notification - notify all dashboards
+    await pusherServer.trigger('appointments', 'appointment-updated', {
+      appointmentId: appointment._id.toString(),
+      queueNumber: appointment.queueNumber,
+      status: appointment.status,
+      updatedBy: session.user?.name || session.user?.email
+    })
 
     return NextResponse.json({
       message: 'Status updated successfully',

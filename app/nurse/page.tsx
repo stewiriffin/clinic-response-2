@@ -9,6 +9,7 @@ import {
   Clock, Phone, ChevronRight, Users, ClipboardCheck,
   Activity, TrendingUp
 } from 'lucide-react'
+import { useRealTimeUpdates } from '@/hooks/useRealTimeUpdates'
 
 // Import custom nurse components
 import PatientDrawer from '@/components/nurse/PatientDrawer'
@@ -69,10 +70,18 @@ export default function NurseDashboard() {
         return
       }
       fetchAppointments()
-      const interval = setInterval(fetchAppointments, 8000) // Refresh every 8 seconds
-      return () => clearInterval(interval)
     }
   }, [status, session, router])
+
+  // 🔔 Real-time updates: Listen for appointment changes
+  useRealTimeUpdates({
+    channel: 'appointments',
+    events: {
+      'appointment-updated': fetchAppointments,
+      'new-booking': fetchAppointments,
+    },
+    enabled: status === 'authenticated',
+  })
 
   const fetchAppointments = async () => {
     try {

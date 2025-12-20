@@ -3,6 +3,7 @@ import { getToken } from 'next-auth/jwt'
 import dbConnect from '@/lib/mongodb'
 import User from '@/models/User'
 import { createAuditLog } from '@/lib/auditLog'
+import { pusherServer } from '@/lib/pusher-server'
 
 export async function PATCH(
   req: NextRequest,
@@ -64,6 +65,16 @@ export async function PATCH(
       details: `User ${user.email} role changed from ${previousRole} to ${role}`,
       severity: role === 'Admin' ? 'critical' : 'medium',
       req
+    })
+
+    // 🔔 Real-time notification
+    await pusherServer.trigger('users', 'user-updated', {
+      userId: user._id.toString(),
+      email: user.email,
+      fullName: user.fullName,
+      role: user.role,
+      previousRole,
+      updateType: 'role-change'
     })
 
     return NextResponse.json({

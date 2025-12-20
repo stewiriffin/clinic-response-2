@@ -7,8 +7,9 @@ import { useRouter } from 'next/navigation'
 import {
   Plus, Search, Trash2, Printer, Edit, LogOut, Menu, X,
   Phone, Mail, User, Stethoscope, AlertCircle,
-  Calendar, Filter
+  Calendar, Filter, Users
 } from 'lucide-react'
+import { useRealTimeUpdates } from '@/hooks/useRealTimeUpdates'
 
 interface Appointment {
   _id: string
@@ -75,10 +76,18 @@ export default function ReceptionistDashboard() {
       router.push('/login')
     } else if (status === 'authenticated') {
       fetchAppointments()
-      const interval = setInterval(fetchAppointments, 5000)
-      return () => clearInterval(interval)
     }
   }, [status, router])
+
+  // 🔔 Real-time updates: Listen for appointment changes
+  useRealTimeUpdates({
+    channel: 'appointments',
+    events: {
+      'appointment-updated': fetchAppointments,
+      'new-booking': fetchAppointments,
+    },
+    enabled: status === 'authenticated',
+  })
 
   const fetchAppointments = async () => {
     try {

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { EnhancedUserTable } from '@/components/admin/EnhancedUserTable'
 import { Search, Filter, RefreshCw, Download } from 'lucide-react'
 import Papa from 'papaparse'
+import { useRealTimeUpdates } from '@/hooks/useRealTimeUpdates'
 
 interface User {
   _id: string
@@ -24,6 +25,16 @@ export default function UserManagementPage() {
   useEffect(() => {
     fetchUsers()
   }, [])
+
+  // 🔔 Real-time updates: Listen for user changes
+  useRealTimeUpdates({
+    channel: 'users',
+    events: {
+      'user-created': fetchUsers,
+      'user-updated': fetchUsers,
+      'user-deleted': fetchUsers,
+    },
+  })
 
   useEffect(() => {
     filterUsers()

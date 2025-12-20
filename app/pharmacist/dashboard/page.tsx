@@ -10,6 +10,7 @@ import {
   Search, Filter, AlertCircle, Printer, TrendingUp, Package,
   ChevronDown, Bell, Settings
 } from 'lucide-react'
+import { useRealTimeUpdates } from '@/hooks/useRealTimeUpdates'
 
 interface Prescription {
   _id: string
@@ -44,10 +45,18 @@ export default function PharmacistDashboard() {
       router.push('/login')
     } else if (status === 'authenticated') {
       fetchPrescriptions()
-      const interval = setInterval(fetchPrescriptions, 10000)
-      return () => clearInterval(interval)
     }
   }, [status, router])
+
+  // 🔔 Real-time updates: Listen for appointment changes (prescriptions are part of appointments)
+  useRealTimeUpdates({
+    channel: 'appointments',
+    events: {
+      'appointment-updated': fetchPrescriptions,
+      'new-booking': fetchPrescriptions,
+    },
+    enabled: status === 'authenticated',
+  })
 
   const fetchPrescriptions = async () => {
     try {

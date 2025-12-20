@@ -3,6 +3,7 @@ import { getToken } from 'next-auth/jwt'
 import dbConnect from '@/lib/mongodb'
 import User from '@/models/User'
 import { createAuditLog } from '@/lib/auditLog'
+import { pusherServer } from '@/lib/pusher-server'
 
 export async function POST(
   req: NextRequest,
@@ -42,6 +43,15 @@ export async function POST(
       details: `User ${user.email} was ${ban ? 'banned' : 'unbanned'}`,
       severity: 'high',
       req
+    })
+
+    // 🔔 Real-time notification
+    await pusherServer.trigger('users', 'user-updated', {
+      userId: user._id.toString(),
+      email: user.email,
+      fullName: user.fullName,
+      isBanned: ban,
+      updateType: 'ban-status'
     })
 
     return NextResponse.json({

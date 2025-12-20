@@ -4,6 +4,7 @@ import LabTest from '@/models/LabTest'
 import { writeFile } from 'fs/promises'
 import path from 'path'
 import { v4 as uuid } from 'uuid'
+import { pusherServer } from '@/lib/pusher-server'
 
 export async function GET() {
   try {
@@ -46,6 +47,14 @@ export async function POST(req: NextRequest) {
       testType,
       status: 'pending',
       fileUrl,
+    })
+
+    // 🔔 Trigger real-time update for lab test creation
+    await pusherServer.trigger('lab-tests', 'lab-test-created', {
+      testId: newTest._id.toString(),
+      patientName: newTest.patientName,
+      testType: newTest.testType,
+      status: newTest.status,
     })
 
     return NextResponse.json(newTest, { status: 201 })

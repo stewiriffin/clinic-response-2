@@ -5,6 +5,7 @@ import User from '@/models/User'
 import { createAuditLog } from '@/lib/auditLog'
 import { checkAdminPermission } from '@/lib/apiPermissions'
 import { Permissions } from '@/lib/permissions'
+import { pusherServer } from '@/lib/pusher-server'
 
 export async function DELETE(
   req: NextRequest,
@@ -51,6 +52,14 @@ export async function DELETE(
       details: `Deleted user ${userInfo.email} (${userInfo.role})`,
       severity: 'critical',
       req
+    })
+
+    // 🔔 Real-time notification
+    await pusherServer.trigger('users', 'user-deleted', {
+      userId: userInfo.id,
+      email: userInfo.email,
+      fullName: userInfo.fullName,
+      role: userInfo.role
     })
 
     return NextResponse.json({

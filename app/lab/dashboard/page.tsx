@@ -8,6 +8,7 @@ import {
   Upload, Plus, Search, Filter, Clock, CheckCircle,
   Download, Trash2, Eye, LogOut, Menu, X, AlertCircle, Beaker
 } from 'lucide-react'
+import { useRealTimeUpdates } from '@/hooks/useRealTimeUpdates'
 
 interface LabTest {
   _id?: string
@@ -54,10 +55,19 @@ export default function LabDashboard() {
       router.push('/login')
     } else if (status === 'authenticated') {
       fetchTests()
-      const interval = setInterval(fetchTests, 10000)
-      return () => clearInterval(interval)
     }
   }, [status, router])
+
+  // 🔔 Real-time updates: Listen for lab test changes
+  useRealTimeUpdates({
+    channel: 'lab-tests',
+    events: {
+      'lab-test-created': fetchTests,
+      'lab-test-updated': fetchTests,
+      'lab-test-deleted': fetchTests,
+    },
+    enabled: status === 'authenticated',
+  })
 
   const fetchTests = async () => {
     try {

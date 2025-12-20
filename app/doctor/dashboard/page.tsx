@@ -9,6 +9,7 @@ import {
   Trash2, Phone, User, Stethoscope, FileText, LogOut,
   ChevronDown, X, Menu
 } from 'lucide-react'
+import { useRealTimeUpdates } from '@/hooks/useRealTimeUpdates'
 
 type Appointment = {
   _id: string
@@ -111,10 +112,18 @@ export default function DoctorDashboard() {
   useEffect(() => {
     if (status === 'authenticated') {
       fetchAppointments()
-      const interval = setInterval(fetchAppointments, 5000)
-      return () => clearInterval(interval)
     }
   }, [status])
+
+  // 🔔 Real-time updates: Listen for appointment changes
+  useRealTimeUpdates({
+    channel: 'appointments',
+    events: {
+      'appointment-updated': fetchAppointments,
+      'new-booking': fetchAppointments,
+    },
+    enabled: status === 'authenticated',
+  })
 
   const updateStatus = async (id: string, newStatus: string) => {
     try {

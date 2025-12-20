@@ -72,10 +72,11 @@ export default function LabDashboard() {
   const fetchTests = async () => {
     try {
       setLoading(true)
+      // Request limited data for faster load
       const res = await fetch('/api/labtests')
       const result = await res.json()
-      // Handle both paginated response and plain array for backwards compatibility
-      const data = Array.isArray(result) ? result : (result.data || [])
+      // Take only the first 50 tests for faster rendering
+      const data = Array.isArray(result) ? result.slice(0, 50) : (result.data?.slice(0, 50) || [])
       setTests(data)
     } catch {
       toast.error('Failed to load lab tests')

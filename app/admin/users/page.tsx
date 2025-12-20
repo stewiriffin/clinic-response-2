@@ -43,7 +43,8 @@ export default function UserManagementPage() {
   const fetchUsers = async () => {
     setLoading(true)
     try {
-      const res = await fetch('/api/admin/users')
+      // Request only 100 users at a time for faster load
+      const res = await fetch('/api/admin/users?limit=100&page=1')
       if (res.ok) {
         const data = await res.json()
         setUsers(data.users || data.data || [])

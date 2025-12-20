@@ -92,7 +92,8 @@ export default function ReceptionistDashboard() {
   const fetchAppointments = async () => {
     try {
       setLoading(true)
-      const res = await fetch('/api/appointment')
+      // Request only 50 appointments at a time for faster load
+      const res = await fetch('/api/appointment?limit=50&page=1')
       const result = await res.json()
       // Handle both paginated response and plain array for backwards compatibility
       const data = Array.isArray(result) ? result : (result.data || [])

@@ -40,6 +40,22 @@ export default function PharmacistDashboard() {
   const [loading, setLoading] = useState(true)
   const [sortBy, setSortBy] = useState<'date' | 'name'>('date')
 
+  const fetchPrescriptions = async () => {
+    try {
+      setLoading(true)
+      // Request only 50 appointments at a time for faster load
+      const res = await fetch('/api/appointment?limit=50&page=1')
+      const result = await res.json()
+      // Handle both paginated response and plain array for backwards compatibility
+      const data = Array.isArray(result) ? result : (result.data || [])
+      setPrescriptions(data.filter((a: any) => a.prescription))
+    } catch {
+      toast.error('Failed to load prescriptions')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/login')
@@ -57,21 +73,6 @@ export default function PharmacistDashboard() {
     },
     enabled: status === 'authenticated',
   })
-
-  const fetchPrescriptions = async () => {
-    try {
-      setLoading(true)
-      const res = await fetch('/api/appointment')
-      const result = await res.json()
-      // Handle both paginated response and plain array for backwards compatibility
-      const data = Array.isArray(result) ? result : (result.data || [])
-      setPrescriptions(data.filter((a: any) => a.prescription))
-    } catch {
-      toast.error('Failed to load prescriptions')
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const handleDispense = async (id: string) => {
     const note = noteInput[id]?.trim() || ''

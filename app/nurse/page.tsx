@@ -85,7 +85,8 @@ export default function NurseDashboard() {
 
   const fetchAppointments = async () => {
     try {
-      const res = await fetch('/api/appointment')
+      // Request only 50 appointments at a time for faster load
+      const res = await fetch('/api/appointment?limit=50&page=1')
       const result = await res.json()
       const data = Array.isArray(result) ? result : (result.data || [])
       setAppointments(data)

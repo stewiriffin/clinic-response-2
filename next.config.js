@@ -7,19 +7,41 @@ const nextConfig = {
   // Enable standalone output for Docker deployments (only in production)
   ...(process.env.NODE_ENV === 'production' && { output: 'standalone' }),
 
-  // Performance optimizations for development
+  // Performance optimizations
   swcMinify: true,
 
-  // Reduce memory usage in development
+  // Faster builds in development
   ...(process.env.NODE_ENV === 'development' && {
-    webpack: (config) => {
+    compiler: {
+      removeConsole: false,
+    },
+  }),
+
+  // Reduce memory usage and improve build speed
+  ...(process.env.NODE_ENV === 'development' && {
+    webpack: (config, { isServer }) => {
+      // Reduce memory usage
       config.watchOptions = {
         poll: 1000,
         aggregateTimeout: 300,
       }
+
+      // Speed up builds by ignoring source maps in development
+      config.devtool = 'eval-cheap-module-source-map'
+
+      // Disable webpack cache in development to prevent stale builds
+      config.cache = false
+
       return config
     },
   }),
+
+  // Enable experimental features for better performance
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'date-fns'],
+    // Turbopack is faster but still experimental
+    // turbo: {},
+  },
 
   // Security headers (also configured in middleware.ts)
   async headers() {

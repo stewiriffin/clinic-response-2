@@ -1,4 +1,4 @@
-// 🔐 Admin Role Hierarchy and Permission System
+// Admin Role Hierarchy and Permission System
 
 export const AdminRole = {
   SUPER_ADMIN: 'SuperAdmin',

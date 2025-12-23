@@ -51,7 +51,7 @@ export async function PATCH(
     user.role = role
     await user.save()
 
-    // 🔒 AUDIT LOG
+    // AUDIT LOG
     await createAuditLog({
       adminId: token.sub!,
       adminEmail: token.email!,
@@ -67,7 +67,7 @@ export async function PATCH(
       req
     })
 
-    // 🔔 Real-time notification
+    // Real-time notification
     await pusherServer.trigger('users', 'user-updated', {
       userId: user._id.toString(),
       email: user.email,

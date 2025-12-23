@@ -81,7 +81,7 @@ export default function BookPage() {
       const result = await response.json()
 
       if (response.ok) {
-        setMessage(`🎉 Success! Your queue number is ${result.data.queueNumber}`)
+        setMessage(`Success! Your queue number is ${result.data.queueNumber}`)
         setFullName('')
         setEmail('')
         setPhone('')

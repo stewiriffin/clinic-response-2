@@ -29,7 +29,7 @@ export async function POST(
     user.password = temporaryPassword
     await user.save()
 
-    // 🔒 AUDIT LOG
+    // AUDIT LOG
     await createAuditLog({
       adminId: token.sub!,
       adminEmail: token.email!,

@@ -10,7 +10,7 @@ import { rateLimit, getClientIdentifier, RateLimitPresets } from '@/lib/rateLimi
 import { sanitizeName, sanitizePhone, sanitizeEmail, sanitizeText, isSafeInput } from '@/lib/sanitize'
 import { apiLogger, logError } from '@/lib/logger'
 
-// ✅ Enhanced schema to validate booking form input
+// Enhanced schema to validate booking form input
 const bookingSchema = z.object({
   fullName: z.string()
     .min(2, 'Name must be at least 2 characters')
@@ -36,7 +36,7 @@ const bookingSchema = z.object({
     ),
 })
 
-// ✅ GET: Fetch bookings with optional search filters
+// GET: Fetch bookings with optional search filters
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams
   const name = searchParams.get('name')
@@ -90,7 +90,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// ✅ POST: Create a new booking
+// POST: Create a new booking
 export async function POST(request: Request) {
   try {
     // Apply rate limiting to prevent booking spam
@@ -144,7 +144,7 @@ export async function POST(request: Request) {
       doctorType: result.data.doctorType,
     })
 
-    // 🔔 Trigger real-time notification
+    // Trigger real-time notification
     await pusherServer.trigger('bookings', 'new-booking', {
       message: 'New booking added',
       appointmentId: appointment._id,

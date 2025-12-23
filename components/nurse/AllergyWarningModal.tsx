@@ -55,7 +55,7 @@ export default function AllergyWarningModal({
               </div>
               <div className="flex-1">
                 <h2 className="text-2xl font-bold text-white mb-1">
-                  ⚠️ ALLERGY ALERT
+                  ALLERGY ALERT
                 </h2>
                 <p className="text-red-200 text-sm">
                   Critical safety warning - Patient has known allergy

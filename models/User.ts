@@ -58,10 +58,12 @@ const UserSchema: Schema<IUser> = new Schema({
     default: false,
   },
 }, {
-  timestamps: true // Adds createdAt and updatedAt fields
+  timestamps: true
 })
 
-// 🔐 Hash password before saving
+/**
+ * Hash password before saving
+ */
 UserSchema.pre<IUser>('save', async function (next) {
   if (!this.isModified('password')) return next()
   const salt = await bcrypt.genSalt(10)
@@ -69,19 +71,22 @@ UserSchema.pre<IUser>('save', async function (next) {
   next()
 })
 
-// 🔍 Compare password method
+/**
+ * Compare password method
+ */
 UserSchema.methods.comparePassword = async function (
   candidatePassword: string
 ): Promise<boolean> {
   return bcrypt.compare(candidatePassword, this.password)
 }
 
-// 🚀 Performance indexes for frequently queried fields
-// Note: email index is automatically created by unique: true
-UserSchema.index({ role: 1 }) // Filter by role
-UserSchema.index({ createdAt: -1 }) // Sort and filter by creation date (descending)
+/**
+ * Performance indexes for frequently queried fields
+ * Note: email index is automatically created by unique: true
+ */
+UserSchema.index({ role: 1 })
+UserSchema.index({ createdAt: -1 })
 
-// 📦 Export model
 const User: Model<IUser> =
   mongoose.models.User || mongoose.model<IUser>('User', UserSchema)
 export default User

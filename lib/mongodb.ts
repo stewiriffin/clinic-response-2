@@ -9,21 +9,16 @@ if (!MONGODB_URI) {
   )
 }
 
-// 👇 Extend NodeJS Global type to include our custom mongoose cache
 declare global {
-  // allow global `mongoose` to be reused in dev
   var mongoose: {
     conn: Mongoose | null
     promise: Promise<Mongoose> | null
   }
 }
 
-// 👇 Initialize global.mongoose if it doesn't exist
 global.mongoose = global.mongoose || { conn: null, promise: null }
 
 const cached = global.mongoose
-
-// Connection event handlers
 let eventHandlersAttached = false
 
 function attachEventHandlers() {
@@ -42,7 +37,6 @@ function attachEventHandlers() {
     dbLogger.warn('MongoDB disconnected')
   })
 
-  // Handle process termination
   process.on('SIGINT', async () => {
     await mongoose.connection.close()
     dbLogger.info('MongoDB connection closed due to app termination')
@@ -51,7 +45,6 @@ function attachEventHandlers() {
 }
 
 async function dbConnect(): Promise<Mongoose> {
-  // Return existing connection
   if (cached.conn) {
     return cached.conn
   }
@@ -62,9 +55,8 @@ async function dbConnect(): Promise<Mongoose> {
       maxPoolSize: 10,
       minPoolSize: 5,
       socketTimeoutMS: 45000,
-      serverSelectionTimeoutMS: 5000, // Reduced from 10s to 5s
-      family: 4, // Use IPv4
-      // Additional connection optimizations
+      serverSelectionTimeoutMS: 5000,
+      family: 4,
       connectTimeoutMS: 5000,
       maxIdleTimeMS: 60000,
     }

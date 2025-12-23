@@ -59,14 +59,14 @@ async function createAllUsers() {
   try {
     console.log('Connecting to MongoDB...');
     await mongoose.connect(process.env.MONGODB_URI);
-    console.log('✅ Connected to MongoDB\n');
+    console.log('Connected to MongoDB\n');
 
     // Delete existing test users (optional - comment out if you want to keep existing users)
     console.log('Cleaning up existing test users...');
     await User.deleteMany({
       email: { $in: testUsers.map(u => u.email) }
     });
-    console.log('✅ Cleaned up\n');
+    console.log('Cleaned up\n');
 
     console.log('Creating test users...\n');
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
@@ -86,17 +86,17 @@ async function createAllUsers() {
 
       await user.save();
 
-      console.log(`✅ Created: ${userData.role.padEnd(15)} | ${userData.email.padEnd(25)} | Password: ${userData.password}`);
+      console.log(`Created: ${userData.role.padEnd(15)} | ${userData.email.padEnd(25)} | Password: ${userData.password}`);
     }
 
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log('\n✅ All users created successfully!\n');
+    console.log('\nAll users created successfully!\n');
     console.log('You can now login with any of the above credentials to test different roles.\n');
-    console.log('⚠️  IMPORTANT: Change these passwords in production!\n');
+    console.log('IMPORTANT: Change these passwords in production!\n');
 
     process.exit(0);
   } catch (error) {
-    console.error('❌ Error:', error.message);
+    console.error('Error:', error.message);
     process.exit(1);
   }
 }

@@ -1,4 +1,4 @@
-# 🚀 Quick Start Guide
+# Quick Start Guide
 
 Get your Clinic Queue System running in under 5 minutes!
 
@@ -54,7 +54,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## 🎉 You're Done!
+## You're Done!
 
 ### Default Test Credentials
 
@@ -164,11 +164,11 @@ PORT=3001 npm run dev
 
 ## Next Steps
 
-1. ✅ **Test the health endpoint**: Visit [http://localhost:3000/api/health](http://localhost:3000/api/health)
-2. ✅ **Create your first appointment**: Go to [http://localhost:3000/book](http://localhost:3000/book)
-3. ✅ **Login as admin**: Use your created admin credentials
-4. ✅ **Explore dashboards**: Navigate to different role dashboards
-5. ✅ **Read the full documentation**: Check [README.md](README.md)
+1. **Test the health endpoint**: Visit [http://localhost:3000/api/health](http://localhost:3000/api/health)
+2. **Create your first appointment**: Go to [http://localhost:3000/book](http://localhost:3000/book)
+3. **Login as admin**: Use your created admin credentials
+4. **Explore dashboards**: Navigate to different role dashboards
+5. **Read the full documentation**: Check [README.md](README.md)
 
 ## Production Deployment
 
@@ -179,10 +179,10 @@ For production deployment, see:
 
 ## Need Help?
 
-- 📖 [Full Documentation](README.md)
-- 🐛 [Report Issues](https://github.com/your-username/clinic-queue-system/issues)
-- 💬 [Get Support](https://github.com/your-username/clinic-queue-system/discussions)
+- [Full Documentation](README.md)
+- [Report Issues](https://github.com/your-username/clinic-queue-system/issues)
+- [Get Support](https://github.com/your-username/clinic-queue-system/discussions)
 
 ---
 
-**Happy coding! 🎉**
+**Happy coding!**

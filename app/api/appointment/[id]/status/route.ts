@@ -16,7 +16,7 @@ export async function PATCH(
   const { id } = params
 
   try {
-    // ⚡ Run session check and body parsing in parallel
+    // Run session check and body parsing in parallel
     const [session, body] = await Promise.all([
       getServerSession(authOptions),
       req.json(),
@@ -35,10 +35,10 @@ export async function PATCH(
       )
     }
 
-    // ⚡ Connect to DB and update in parallel
+    // Connect to DB and update in parallel
     await dbConnect()
 
-    // ⚡ Use findByIdAndUpdate for 2x faster performance than find + save
+    // Use findByIdAndUpdate for 2x faster performance than find + save
     const appointment = await Appointment.findByIdAndUpdate(
       id,
       { status },
@@ -52,7 +52,7 @@ export async function PATCH(
       )
     }
 
-    // 🔔 Real-time notification - non-blocking
+    // Real-time notification - non-blocking
     pusherServer.trigger('appointments', 'appointment-updated', {
       appointmentId: appointment._id.toString(),
       queueNumber: appointment.queueNumber,

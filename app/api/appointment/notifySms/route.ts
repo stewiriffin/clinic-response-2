@@ -42,10 +42,10 @@ export async function POST(req: NextRequest) {
       from: process.env.TWILIO_PHONE_NUMBER!, // Must be a Twilio-verified number
     })
 
-    console.log('✅ SMS sent:', message.sid)
+    console.log('SMS sent:', message.sid)
     return NextResponse.json({ success: true, sid: message.sid })
   } catch (error: any) {
-    console.error('❌ SMS error:', error)
+    console.error('SMS error:', error)
     return NextResponse.json(
       { error: error.message || 'SMS sending failed' },
       { status: 500 }

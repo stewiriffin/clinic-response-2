@@ -1,4 +1,4 @@
-# 🏥 Clinic Queue System
+# Clinic Queue System
 
 A production-ready, full-stack Clinic Queue Management System built with **Next.js 14**, **TypeScript**, and **MongoDB**. This system streamlines appointment booking, queue tracking, diagnosis recording, and provides role-based dashboards for clinic staff.
 
@@ -7,18 +7,18 @@ A production-ready, full-stack Clinic Queue Management System built with **Next.
 
 ---
 
-## ✨ Features
+## Features
 
-### 🔐 Security & Authentication
-- ✅ **Secure Authentication** via NextAuth.js with JWT sessions
-- ✅ **Role-Based Access Control** (RBAC) for 7 user roles
-- ✅ **Rate Limiting** on auth (5/15min), bookings (3/5min), notifications (10/10min)
-- ✅ **Input Sanitization** with XSS, SQL, and NoSQL injection protection
-- ✅ **Security Headers** (CSP, HSTS, X-Frame-Options, etc.)
-- ✅ **Audit Logging** for admin actions
-- ✅ **Environment Validation** with Zod schemas
+### Security & Authentication
+- **Secure Authentication** via NextAuth.js with JWT sessions
+- **Role-Based Access Control** (RBAC) for 7 user roles
+- **Rate Limiting** on auth (5/15min), bookings (3/5min), notifications (10/10min)
+- **Input Sanitization** with XSS, SQL, and NoSQL injection protection
+- **Security Headers** (CSP, HSTS, X-Frame-Options, etc.)
+- **Audit Logging** for admin actions
+- **Environment Validation** with Zod schemas
 
-### 📅 Appointment Management
+### Appointment Management
 - Auto-generated queue numbers
 - Real-time status updates: `waiting`, `in-progress`, `done`
 - Live queue updates via **Pusher**
@@ -26,7 +26,7 @@ A production-ready, full-stack Clinic Queue Management System built with **Next.
 - Appointment rescheduling and cancellation
 - Patient slip printing
 
-### 🧑‍⚕️ Role-Based Dashboards
+### Role-Based Dashboards
 
 **Admin**
 - User management (view, edit roles, delete)
@@ -64,18 +64,18 @@ A production-ready, full-stack Clinic Queue Management System built with **Next.
 - Queue management
 - Slip printing
 
-### 📊 Performance & Monitoring
-- ✅ **Database Indexing** (11 indexes for 10-100x faster queries)
-- ✅ **Pagination** on all list endpoints
-- ✅ **Structured Logging** with Pino (production-ready)
-- ✅ **Health Check** endpoint (`/api/health`)
-- ✅ **Performance Monitoring** utilities
-- ✅ **Error Boundaries** for graceful failures
-- ✅ **Connection Pooling** for MongoDB
+### Performance & Monitoring
+- **Database Indexing** (11 indexes for 10-100x faster queries)
+- **Pagination** on all list endpoints
+- **Structured Logging** with Pino (production-ready)
+- **Health Check** endpoint (`/api/health`)
+- **Performance Monitoring** utilities
+- **Error Boundaries** for graceful failures
+- **Connection Pooling** for MongoDB
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Technology | Version | Purpose |
 |------------|---------|---------|
@@ -94,7 +94,7 @@ A production-ready, full-stack Clinic Queue Management System built with **Next.
 
 ---
 
-## 📦 Installation
+## Installation
 
 ### Prerequisites
 - Node.js 18+ or 20+
@@ -125,7 +125,7 @@ Visit [http://localhost:3000](http://localhost:3000)
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
 ### Required Environment Variables
 
@@ -174,7 +174,7 @@ TWILIO_PHONE_NUMBER=+1234567890
 
 ---
 
-## 🚀 Deployment
+## Deployment
 
 ### Docker Deployment (Recommended)
 
@@ -214,7 +214,7 @@ npm start
 
 ---
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Run all tests
@@ -228,13 +228,13 @@ npm run test:coverage
 ```
 
 Current test coverage:
-- Sanitization utilities: ✅ Full coverage
-- Rate limiting: ✅ Full coverage
-- API error handling: ⏳ In progress
+- Sanitization utilities: Full coverage
+- Rate limiting: Full coverage
+- API error handling: In progress
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 clinic-queue-system/
@@ -283,29 +283,29 @@ clinic-queue-system/
 
 ---
 
-## 🔒 Security Features
+## Security Features
 
 ### Implemented
-- ✅ Rate limiting on critical endpoints
-- ✅ Input sanitization (XSS, SQL, NoSQL injection)
-- ✅ Security headers (CSP, HSTS, X-Frame-Options)
-- ✅ Environment variable validation
-- ✅ Password hashing with bcrypt (10 rounds)
-- ✅ JWT-based sessions
-- ✅ Audit logging for admin actions
-- ✅ CSRF protection (via NextAuth)
+- Rate limiting on critical endpoints
+- Input sanitization (XSS, SQL, NoSQL injection)
+- Security headers (CSP, HSTS, X-Frame-Options)
+- Environment variable validation
+- Password hashing with bcrypt (10 rounds)
+- JWT-based sessions
+- Audit logging for admin actions
+- CSRF protection (via NextAuth)
 
 ### Best Practices
-- ❌ Secrets never committed to git
-- ✅ `.env` files in `.gitignore`
-- ✅ Admin-only endpoints protected
-- ✅ Strong validation on all inputs
-- ✅ Database indexes for performance
-- ✅ Error boundaries for graceful failures
+- Secrets never committed to git
+- `.env` files in `.gitignore`
+- Admin-only endpoints protected
+- Strong validation on all inputs
+- Database indexes for performance
+- Error boundaries for graceful failures
 
 ---
 
-## 📊 API Documentation
+## API Documentation
 
 ### Core Endpoints
 
@@ -350,7 +350,7 @@ GET    /api/health             # Health check
 
 ---
 
-## 🛡️ Database Backup & Restore
+## Database Backup & Restore
 
 ### Backup Database
 ```bash
@@ -368,7 +368,7 @@ chmod +x scripts/restore-db.sh
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Build Errors
 
@@ -398,7 +398,7 @@ cp .env.example .env
 
 ---
 
-## 📝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
@@ -414,13 +414,13 @@ cp .env.example .env
 
 ---
 
-## 📜 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Built with [Next.js](https://nextjs.org/)
 - Authentication by [NextAuth.js](https://next-auth.js.org/)
@@ -429,13 +429,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 📞 Support
+## Support
 
 For issues, questions, or suggestions:
-- 🐛 [Open an issue](https://github.com/your-username/clinic-queue-system/issues)
-- 💬 [Start a discussion](https://github.com/your-username/clinic-queue-system/discussions)
-- 📧 Email: support@yourclinic.com
+- [Open an issue](https://github.com/your-username/clinic-queue-system/issues)
+- [Start a discussion](https://github.com/your-username/clinic-queue-system/discussions)
+- Email: support@yourclinic.com
 
 ---
 
-**Made with ❤️ for healthcare providers**
+**Made with care for healthcare providers**

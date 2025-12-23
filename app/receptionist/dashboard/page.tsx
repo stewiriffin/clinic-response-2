@@ -79,7 +79,7 @@ export default function ReceptionistDashboard() {
     }
   }, [status, router])
 
-  // 🔔 Real-time updates: Listen for appointment changes
+  // Real-time updates: Listen for appointment changes
   useRealTimeUpdates({
     channel: 'appointments',
     events: {

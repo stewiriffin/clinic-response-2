@@ -25,7 +25,7 @@ export async function PATCH(
       })
     }
 
-    // 🔔 Trigger real-time update for lab test update
+    // Trigger real-time update for lab test update
     await pusherServer.trigger('lab-tests', 'lab-test-updated', {
       testId: updated._id.toString(),
       patientName: updated.patientName,
@@ -55,7 +55,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Lab test not found' }, { status: 404 })
     }
 
-    // 🔔 Trigger real-time update for lab test deletion
+    // Trigger real-time update for lab test deletion
     await pusherServer.trigger('lab-tests', 'lab-test-deleted', {
       testId: params.id,
       patientName: deleted.patientName,

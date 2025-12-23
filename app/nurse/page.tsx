@@ -59,7 +59,7 @@ export default function NurseDashboard() {
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
 
-  // ⚡ Define fetchAppointments BEFORE using it in hooks
+  // Define fetchAppointments BEFORE using it in hooks
   const fetchAppointments = async () => {
     try {
       // Request only 50 appointments at a time for faster load
@@ -88,7 +88,7 @@ export default function NurseDashboard() {
     }
   }, [status, session, router])
 
-  // 🔔 Real-time updates: Listen for appointment changes
+  // Real-time updates: Listen for appointment changes
   useRealTimeUpdates({
     channel: 'appointments',
     events: {
@@ -99,7 +99,7 @@ export default function NurseDashboard() {
   })
 
   const handleCallPatient = async (id: string) => {
-    // ⚡ OPTIMISTIC UI: Update state immediately for instant feedback
+    // OPTIMISTIC UI: Update state immediately for instant feedback
     const previousAppointments = [...appointments]
     setAppointments(prev =>
       prev.map(a => a._id === id ? { ...a, status: 'in-progress' } : a)
@@ -115,14 +115,14 @@ export default function NurseDashboard() {
       if (!res.ok) throw new Error()
       // Success - optimistic update was correct
     } catch {
-      // ❌ Revert on error
+      // Revert on error
       setAppointments(previousAppointments)
       toast.error('Failed to update status')
     }
   }
 
   const handleUpdateVitals = async (id: string, vitals: any) => {
-    // ⚡ OPTIMISTIC UI: Update state immediately
+    // OPTIMISTIC UI: Update state immediately
     const previousAppointments = [...appointments]
     setAppointments(prev =>
       prev.map(a => a._id === id ? { ...a, ...vitals } : a)
@@ -139,7 +139,7 @@ export default function NurseDashboard() {
       if (!res.ok) throw new Error()
       // Success - optimistic update was correct
     } catch {
-      // ❌ Revert on error
+      // Revert on error
       setAppointments(previousAppointments)
       setTriageMode(id) // Re-open triage mode
       toast.error('Failed to update vitals')
@@ -147,7 +147,7 @@ export default function NurseDashboard() {
   }
 
   const handleNotifyDoctor = async (id: string) => {
-    // ⚡ OPTIMISTIC UI: Update state immediately
+    // OPTIMISTIC UI: Update state immediately
     const previousAppointments = [...appointments]
     setAppointments(prev =>
       prev.map(a => a._id === id ? { ...a, readyForDoctor: true } : a)
@@ -163,7 +163,7 @@ export default function NurseDashboard() {
       if (!res.ok) throw new Error()
       // Success - optimistic update was correct
     } catch {
-      // ❌ Revert on error
+      // Revert on error
       setAppointments(previousAppointments)
       toast.error('Notification failed')
     }

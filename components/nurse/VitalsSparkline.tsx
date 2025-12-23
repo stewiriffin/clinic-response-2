@@ -129,7 +129,7 @@ export default function VitalsSparkline({
       {!isNormal && normalRange && (
         <div className="mt-2 pt-2 border-t border-current/20">
           <p className="text-xs font-medium">
-            ⚠️ Outside normal range ({normalRange.min}-{normalRange.max}{unit})
+            Outside normal range ({normalRange.min}-{normalRange.max}{unit})
           </p>
         </div>
       )}

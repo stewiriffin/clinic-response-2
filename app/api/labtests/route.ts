@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
       fileUrl,
     })
 
-    // 🔔 Trigger real-time update for lab test creation
+    // Trigger real-time update for lab test creation
     await pusherServer.trigger('lab-tests', 'lab-test-created', {
       testId: newTest._id.toString(),
       patientName: newTest.patientName,

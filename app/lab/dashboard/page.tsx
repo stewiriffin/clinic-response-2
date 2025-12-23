@@ -58,7 +58,7 @@ export default function LabDashboard() {
     }
   }, [status, router])
 
-  // 🔔 Real-time updates: Listen for lab test changes
+  // Real-time updates: Listen for lab test changes
   useRealTimeUpdates({
     channel: 'lab-tests',
     events: {

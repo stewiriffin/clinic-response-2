@@ -69,7 +69,7 @@ export default function RapidResponseHeader({
   }, [isHolding])
 
   const triggerCodeBlue = () => {
-    toast.error('🚨 CODE BLUE ACTIVATED', {
+    toast.error('CODE BLUE ACTIVATED', {
       duration: 5000,
       style: {
         background: '#991b1b',
@@ -88,7 +88,6 @@ export default function RapidResponseHeader({
   const handleCodeBlueMouseUp = () => {
     if (codeBlueHoldProgress < 100) {
       toast('Hold for 1 second to activate Code Blue', {
-        icon: '⚠️',
         duration: 2000
       })
     }

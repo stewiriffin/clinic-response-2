@@ -4,7 +4,7 @@
 
 The Smart Clinical Workspace is an enterprise-grade clinical interface that reduces cognitive load, prevents medical errors, and enables rapid data entry comparable to professional EMR/EHR systems. Built for high-pressure hospital environments where every second counts.
 
-## 🚀 Advanced Features
+## Advanced Features
 
 ### 1. **Heads-Up Patient Safety System**
 
@@ -29,10 +29,10 @@ The Smart Clinical Workspace is an enterprise-grade clinical interface that redu
 ```
 
 **Features**:
-- 🔴 High-contrast red theme with animated pulse
-- ⚠️ Lists all known patient allergies
-- 🛡️ Supervisor override password requirement
-- 📋 Medication vs. allergy comparison
+- High-contrast red theme with animated pulse
+- Lists all known patient allergies
+- Supervisor override password requirement
+- Medication vs. allergy comparison
 
 ---
 
@@ -55,10 +55,10 @@ The Smart Clinical Workspace is an enterprise-grade clinical interface that redu
 ```
 
 **Features**:
-- 📊 SVG-based sparkline charts
-- 📈 Trend percentage calculation
-- 🎯 Normal range overlay
-- 🔴 Out-of-range warnings
+- SVG-based sparkline charts
+- Trend percentage calculation
+- Normal range overlay
+- Out-of-range warnings
 
 ---
 
@@ -94,11 +94,11 @@ const {
 ```
 
 **Features**:
-- 🎤 Browser SpeechRecognition API
-- 🔴 Visual "listening" indicator with pulse
-- ✅ Append to existing notes
-- 🔄 Clear/reset functionality
-- 📱 Works on modern browsers (Chrome, Edge, Safari)
+- Browser SpeechRecognition API
+- Visual "listening" indicator with pulse
+- Append to existing notes
+- Clear/reset functionality
+- Works on modern browsers (Chrome, Edge, Safari)
 
 **Example Use Case**:
 > Nurse clicks "Dictate Note" → Speaks: "Patient complains of sharp pain in left abdomen, reports nausea, appears uncomfortable" → System transcribes automatically → Appends to clinical notes
@@ -126,21 +126,21 @@ const {
 **Features**:
 
 #### Code Blue Button
-- ⏱️ **1-second hold** to activate (prevents accidental triggers)
-- 📊 Visual progress bar during hold
-- 🚨 Broadcasts alert to all dashboards
-- 🔊 Toast notification with emergency sound
+- **1-second hold** to activate (prevents accidental triggers)
+- Visual progress bar during hold
+- Broadcasts alert to all dashboards
+- Toast notification with emergency sound
 
 #### Shift Timer
-- ⏰ Live countdown (e.g., "5h 23m until shift end")
-- 🔴 Changes color when <1 hour remains
-- 📅 Auto-updates every second
+- Live countdown (e.g., "5h 23m until shift end")
+- Changes color when <1 hour remains
+- Auto-updates every second
 
-#### Quick Search (⌘K)
-- ⚡ Instant patient lookup
-- 🔍 Searches: name, phone, queue number
-- ⌨️ Keyboard shortcuts (Arrow keys, Enter, Esc)
-- 📱 Works globally from anywhere
+#### Quick Search (CMD+K)
+- Instant patient lookup
+- Searches: name, phone, queue number
+- Keyboard shortcuts (Arrow keys, Enter, Esc)
+- Works globally from anywhere
 
 ---
 
@@ -157,11 +157,11 @@ const {
 **API Endpoint**: `app/api/search/route.ts`
 
 **Features**:
-- 🚀 300ms debounce for performance
-- 🔍 Fuzzy search across multiple fields
-- ⌨️ Full keyboard navigation
-- 📋 Shows: patient info, queue #, status, reason
-- ➡️ Click or press Enter to select
+- 300ms debounce for performance
+- Fuzzy search across multiple fields
+- Full keyboard navigation
+- Shows: patient info, queue #, status, reason
+- Click or press Enter to select
 
 **Search Capabilities**:
 - Name: "john doe" → finds "John Doe"
@@ -201,20 +201,20 @@ const status = offlineSync.getStatusMessage()
 ```
 
 **Features**:
-- 📴 Detects offline/online state
-- 💾 Stores in browser localStorage
-- 🔄 Auto-syncs on reconnection
-- 📊 Shows pending items count
-- ⚠️ Visual "Offline Mode" indicator
-- 🔁 3 retry attempts per item
-- 🗑️ Removes failed items after max retries
+- Detects offline/online state
+- Stores in browser localStorage
+- Auto-syncs on reconnection
+- Shows pending items count
+- Visual "Offline Mode" indicator
+- 3 retry attempts per item
+- Removes failed items after max retries
 
 **Status Messages**:
-- ✅ "All synced" - Everything up to date
-- ⚠️ "Offline Mode" - No connection, no pending items
-- ⚠️ "Offline - 3 items pending sync" - Offline with queue
-- 🔄 "Syncing..." - Active sync in progress
-- 📡 "2 items pending sync" - Online but not yet synced
+- "All synced" - Everything up to date
+- "Offline Mode" - No connection, no pending items
+- "Offline - 3 items pending sync" - Offline with queue
+- "Syncing..." - Active sync in progress
+- "2 items pending sync" - Online but not yet synced
 
 ---
 
@@ -381,17 +381,17 @@ const handleSaveVitals = async (id: string, vitals: any) => {
 ## Browser Compatibility
 
 ### Voice Dictation
-✅ Chrome 25+
-✅ Edge 79+
-✅ Safari 14.1+
-❌ Firefox (not supported)
+- Chrome 25+
+- Edge 79+
+- Safari 14.1+
+- Firefox (not supported)
 
 ### Offline Sync
-✅ All modern browsers (localStorage)
-✅ Progressive enhancement (graceful degradation)
+- All modern browsers (localStorage)
+- Progressive enhancement (graceful degradation)
 
 ### Search (Cmd+K)
-✅ All modern browsers
+- All modern browsers
 
 ---
 
@@ -419,8 +419,8 @@ const handleSaveVitals = async (id: string, vitals: any) => {
 
 | Shortcut | Action |
 |----------|--------|
-| `⌘K` / `Ctrl+K` | Open global search |
-| `↑` / `↓` | Navigate search results |
+| `CMD+K` / `Ctrl+K` | Open global search |
+| `Up` / `Down` | Navigate search results |
 | `Enter` | Select search result |
 | `Esc` | Close search modal |
 

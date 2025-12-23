@@ -64,7 +64,7 @@ export default function PharmacistDashboard() {
     }
   }, [status, router])
 
-  // 🔔 Real-time updates: Listen for appointment changes (prescriptions are part of appointments)
+  // Real-time updates: Listen for appointment changes (prescriptions are part of appointments)
   useRealTimeUpdates({
     channel: 'appointments',
     events: {

@@ -38,7 +38,7 @@ export async function DELETE(
     // Delete user
     await User.findByIdAndDelete(params.id)
 
-    // 🔒 AUDIT LOG
+    // AUDIT LOG
     await createAuditLog({
       adminId: token.sub!,
       adminEmail: token.email!,
@@ -54,7 +54,7 @@ export async function DELETE(
       req
     })
 
-    // 🔔 Real-time notification
+    // Real-time notification
     await pusherServer.trigger('users', 'user-deleted', {
       userId: userInfo.id,
       email: userInfo.email,

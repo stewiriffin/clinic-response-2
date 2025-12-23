@@ -35,7 +35,7 @@ export async function POST(
     user.role = 'Admin'
     await user.save()
 
-    // 🔒 AUDIT LOG
+    // AUDIT LOG
     await createAuditLog({
       adminId: token.sub!,
       adminEmail: token.email!,

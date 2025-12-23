@@ -22,7 +22,7 @@ export default async function handler(
 
   await connectToDatabase()
 
-  const user = await User.findOne({ email, role }) // ✅ Match email + role
+  const user = await User.findOne({ email, role }) // Match email + role
   if (!user) {
     return res.status(401).json({ message: 'Invalid email or role' })
   }

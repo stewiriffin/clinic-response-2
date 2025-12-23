@@ -64,7 +64,7 @@ export default async function handler(
 
     res.status(201).json({ message: 'Users seeded successfully' })
   } catch (error) {
-    console.error('❌ Error seeding users:', error)
+    console.error('Error seeding users:', error)
     res.status(500).json({ message: 'Error creating users', error })
   }
 }

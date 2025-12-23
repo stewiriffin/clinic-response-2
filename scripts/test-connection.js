@@ -14,14 +14,14 @@ async function testConnection() {
       serverSelectionTimeoutMS: 5000
     });
 
-    console.log('✅ SUCCESS! Connected to MongoDB');
+    console.log('SUCCESS! Connected to MongoDB');
     console.log('Database:', mongoose.connection.name);
 
     await mongoose.connection.close();
     console.log('Connection closed');
     process.exit(0);
   } catch (error) {
-    console.error('❌ FAILED to connect');
+    console.error('FAILED to connect');
     console.error('Error:', error.message);
     process.exit(1);
   }

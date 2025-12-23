@@ -41,10 +41,12 @@ const PatientSchema = new Schema<IPatient>({
   }
 })
 
-// 🚀 Performance indexes for frequently queried fields
-PatientSchema.index({ phone: 1 }) // Phone number lookup (queue status checks)
-PatientSchema.index({ email: 1 }, { sparse: true }) // Email lookup for patient login
-PatientSchema.index({ fullName: 'text' }) // Text search for patient names
+/**
+ * Performance indexes for frequently queried fields
+ */
+PatientSchema.index({ phone: 1 })
+PatientSchema.index({ email: 1 }, { sparse: true })
+PatientSchema.index({ fullName: 'text' })
 
 const Patient =
   mongoose.models.Patient || mongoose.model<IPatient>('Patient', PatientSchema)

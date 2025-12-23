@@ -6,7 +6,7 @@ import dbConnect from '@/lib/mongodb'
 import Appointment from '@/models/Appointment'
 import { pusherServer } from '@/lib/pusher-server'
 
-// ✅ Use correct inline typing for params context
+// Use correct inline typing for params context
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Record<string, string> }

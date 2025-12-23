@@ -9,7 +9,7 @@ import { rateLimit, getClientIdentifier, RateLimitPresets } from '@/lib/rateLimi
 import { sanitizeName, sanitizePhone, sanitizeEmail, sanitizeText, isSafeInput } from '@/lib/sanitize'
 import { apiLogger, logError } from '@/lib/logger'
 
-// ✅ Optional: Define a lean interface for queueNumber
+// Optional: Define a lean interface for queueNumber
 interface AppointmentLean {
   queueNumber?: number
 }
@@ -73,25 +73,25 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // ✅ Save patient
+    // Save patient
     const patient = await Patient.create(result.data)
 
     // Destructure validated data
     const { email, phone, fullName, doctorType, reason } = result.data
 
-    // ✅ Fix TypeScript error with typed lean()
+    // Fix TypeScript error with typed lean()
     const last = await Appointment.findOne()
       .sort({ queueNumber: -1 })
       .lean<AppointmentLean>()
     const nextQueue = last?.queueNumber ? last.queueNumber + 1 : 1
 
-    // ✅ Create appointment
+    // Create appointment
     await Appointment.create({
       patient: patient._id,
       queueNumber: nextQueue,
     })
 
-    // ✅ Optional email notification
+    // Optional email notification
     if (email) {
       try {
         await fetch(`${process.env.NEXTAUTH_URL}/api/appointment/notifyEmail`, {
@@ -108,7 +108,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // ✅ Optional SMS notification
+    // Optional SMS notification
     if (phone) {
       try {
         await fetch(`${process.env.NEXTAUTH_URL}/api/appointment/notifySms`, {

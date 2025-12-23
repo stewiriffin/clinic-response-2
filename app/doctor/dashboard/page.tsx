@@ -116,7 +116,7 @@ export default function DoctorDashboard() {
     }
   }, [status])
 
-  // 🔔 Real-time updates: Listen for appointment changes
+  // Real-time updates: Listen for appointment changes
   useRealTimeUpdates({
     channel: 'appointments',
     events: {
@@ -127,7 +127,7 @@ export default function DoctorDashboard() {
   })
 
   const updateStatus = async (id: string, newStatus: string) => {
-    // ⚡ OPTIMISTIC UI: Update state immediately
+    // OPTIMISTIC UI: Update state immediately
     const previousAppointments = [...appointments]
     setAppointments(prev =>
       prev.map(a => a._id === id ? { ...a, status: newStatus } : a)
@@ -143,14 +143,14 @@ export default function DoctorDashboard() {
       if (!res.ok) throw new Error()
       // Success - optimistic update was correct
     } catch {
-      // ❌ Revert on error
+      // Revert on error
       setAppointments(previousAppointments)
       toast.error('Failed to update status')
     }
   }
 
   const handleSave = async (id: string) => {
-    // ⚡ OPTIMISTIC UI: Update state immediately
+    // OPTIMISTIC UI: Update state immediately
     const previousAppointments = [...appointments]
     setAppointments(prev =>
       prev.map(a => a._id === id ? { ...a, ...edited[id] } : a)
@@ -167,7 +167,7 @@ export default function DoctorDashboard() {
       })
       // Success - optimistic update was correct
     } catch {
-      // ❌ Revert on error
+      // Revert on error
       setAppointments(previousAppointments)
       setIsEditing(true)
       setExpandedId(id)
@@ -176,7 +176,7 @@ export default function DoctorDashboard() {
   }
 
   const handleDelete = async (id: string) => {
-    // ⚡ OPTIMISTIC UI: Remove from UI immediately
+    // OPTIMISTIC UI: Remove from UI immediately
     const previousAppointments = [...appointments]
     setAppointments(prev => prev.filter(a => a._id !== id))
     setDeleteConfirm(null)
@@ -187,7 +187,7 @@ export default function DoctorDashboard() {
       if (!res.ok) throw new Error()
       // Success - optimistic update was correct
     } catch {
-      // ❌ Revert on error
+      // Revert on error
       setAppointments(previousAppointments)
       toast.error('Failed to delete appointment')
     }

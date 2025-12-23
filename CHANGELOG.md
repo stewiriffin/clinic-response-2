@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.0.0] - 2025-12-17
 
-### 🔐 Security Enhancements
+### Security Enhancements
 
 #### Added
 - **Rate Limiting** on all critical endpoints
@@ -40,7 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Strengthened user management endpoints with security checks
 - Improved audit logging with security event tracking
 
-### 📊 Performance Improvements
+### Performance Improvements
 
 #### Added
 - **Database Indexes** (11 indexes across models)
@@ -67,7 +67,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Optimized database queries with `.lean()` and indexes
 - Implemented concurrent queries with `Promise.all()`
 
-### 🛠️ Infrastructure
+### Infrastructure
 
 #### Added
 - **Structured Logging** with Pino ([lib/logger.ts](lib/logger.ts))
@@ -109,7 +109,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - restore-db.sh (recovery)
   - Compression and cloud upload support
 
-### 📝 Documentation
+### Documentation
 
 #### Added
 - Comprehensive [README.md](README.md) update
@@ -120,7 +120,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Deployment guides (Docker, Vercel, Manual)
 - Troubleshooting section
 
-### 🔧 Developer Experience
+### Developer Experience
 
 #### Added
 - Type definitions for all utilities
@@ -136,7 +136,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced TypeScript strict mode compliance
 - Improved error messages throughout
 
-### 🐛 Bug Fixes
+### Bug Fixes
 
 #### Fixed
 - TypeScript compilation errors in API routes
@@ -145,7 +145,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MongoDB connection error handling
 - Build-time environment variable validation
 
-### ⚠️ Breaking Changes
+### Breaking Changes
 
 #### Changed
 - API responses now include pagination metadata
@@ -174,7 +174,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `X-RateLimit-Reset`
   - `Retry-After` (on 429 responses)
 
-### 📦 Dependencies
+### Dependencies
 
 #### Added
 - pino@10.1.0 - Structured logging
@@ -219,11 +219,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Legend
 
-- 🔐 Security
-- 📊 Performance
-- 🛠️ Infrastructure
-- 📝 Documentation
-- 🔧 Developer Experience
-- 🐛 Bug Fixes
-- ⚠️ Breaking Changes
-- 📦 Dependencies
+- Security
+- Performance
+- Infrastructure
+- Documentation
+- Developer Experience
+- Bug Fixes
+- Breaking Changes
+- Dependencies

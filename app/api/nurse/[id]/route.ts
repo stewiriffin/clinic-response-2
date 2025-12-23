@@ -36,7 +36,7 @@ export async function PATCH(
     if (triageRiskLevel !== undefined) updateData.triageRiskLevel = triageRiskLevel
     if (readyForDoctor === true) updateData.readyForDoctor = true
 
-    // ⚡ Use findByIdAndUpdate for 50% faster performance than find + save
+    // Use findByIdAndUpdate for 50% faster performance than find + save
     const appointment = await Appointment.findByIdAndUpdate(
       id,
       updateData,
@@ -50,7 +50,7 @@ export async function PATCH(
       )
     }
 
-    // ✅ Notify doctor if requested (non-blocking)
+    // Notify doctor if requested (non-blocking)
     if (readyForDoctor === true) {
       pusherServer.trigger('appointments', 'doctor-notified', {
         appointmentId: appointment._id,
@@ -59,7 +59,7 @@ export async function PATCH(
       }).catch(err => console.error('Pusher error:', err))
     }
 
-    // 🔔 Trigger real-time update
+    // Trigger real-time update
     pusherServer.trigger('appointments', 'appointment-updated', {
       appointmentId: appointment._id,
       queueNumber: appointment.queueNumber,

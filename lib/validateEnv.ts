@@ -55,9 +55,9 @@ export function validateEnv(): ValidatedEnv {
         return `  - ${path}: ${err.message}`;
       });
 
-      console.error('\n❌ Environment variable validation failed:\n');
+      console.error('\nEnvironment variable validation failed:\n');
       console.error(missingVars.join('\n'));
-      console.error('\n📝 Check your .env file and compare with .env.example\n');
+      console.error('\nCheck your .env file and compare with .env.example\n');
 
       throw new Error('Invalid environment variables');
     }
@@ -73,17 +73,17 @@ export function checkOptionalFeatures() {
 
   // Check Pusher
   if (!process.env.PUSHER_APP_ID || !process.env.PUSHER_KEY) {
-    warnings.push('⚠️  Pusher not configured - Real-time updates disabled');
+    warnings.push('Pusher not configured - Real-time updates disabled');
   }
 
   // Check Email
   if (!process.env.SMTP_HOST || !process.env.SMTP_USER) {
-    warnings.push('⚠️  SMTP not configured - Email notifications disabled');
+    warnings.push('SMTP not configured - Email notifications disabled');
   }
 
   // Check SMS
   if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN) {
-    warnings.push('⚠️  Twilio not configured - SMS notifications disabled');
+    warnings.push('Twilio not configured - SMS notifications disabled');
   }
 
   if (warnings.length > 0 && process.env.NODE_ENV === 'development') {

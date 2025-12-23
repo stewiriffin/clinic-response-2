@@ -20,12 +20,12 @@ async function createAdmin() {
   try {
     console.log('Connecting to MongoDB...');
     await mongoose.connect(process.env.MONGODB_URI);
-    console.log('✅ Connected to MongoDB');
+    console.log('Connected to MongoDB');
 
     // Check if admin already exists
     const existingAdmin = await User.findOne({ email: 'admin@clinic.com' });
     if (existingAdmin) {
-      console.log('⚠️  Admin user already exists!');
+      console.log('Admin user already exists!');
       console.log('Email: admin@clinic.com');
       process.exit(0);
     }
@@ -44,17 +44,17 @@ async function createAdmin() {
 
     await admin.save();
 
-    console.log('\n✅ Admin user created successfully!');
+    console.log('\nAdmin user created successfully!');
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.log('Email:    admin@clinic.com');
     console.log('Password: admin123');
     console.log('Role:     Admin');
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log('\n⚠️  IMPORTANT: Change this password after first login!\n');
+    console.log('\nIMPORTANT: Change this password after first login!\n');
 
     process.exit(0);
   } catch (error) {
-    console.error('❌ Error:', error.message);
+    console.error('Error:', error.message);
     process.exit(1);
   }
 }

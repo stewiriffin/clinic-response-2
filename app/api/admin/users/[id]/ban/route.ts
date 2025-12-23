@@ -24,12 +24,10 @@ export async function POST(
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    // Update user ban status
     // @ts-ignore - isBanned field may not be in type yet
     user.isBanned = ban
     await user.save()
 
-    // 🔒 AUDIT LOG
     await createAuditLog({
       adminId: token.sub!,
       adminEmail: token.email!,
@@ -45,7 +43,6 @@ export async function POST(
       req
     })
 
-    // 🔔 Real-time notification
     await pusherServer.trigger('users', 'user-updated', {
       userId: user._id.toString(),
       email: user.email,

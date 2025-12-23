@@ -22,14 +22,14 @@ export default function UserManagementPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [roleFilter, setRoleFilter] = useState('all')
 
-  // ⚡ DEBOUNCE search to prevent filtering spam (wait 300ms after user stops typing)
   const debouncedSearch = useDebounce(searchQuery, 300)
 
-  // ⚡ MEMOIZE fetchUsers with useCallback to prevent re-renders
+  /**
+   * Fetch users with pagination
+   */
   const fetchUsers = useCallback(async () => {
     setLoading(true)
     try {
-      // Request only 100 users at a time for faster load
       const res = await fetch('/api/admin/users?limit=100&page=1')
       if (res.ok) {
         const data = await res.json()
@@ -48,7 +48,6 @@ export default function UserManagementPage() {
     fetchUsers()
   }, [fetchUsers])
 
-  // 🔔 Real-time updates: Listen for user changes
   useRealTimeUpdates({
     channel: 'users',
     events: {
@@ -58,11 +57,8 @@ export default function UserManagementPage() {
     },
   })
 
-  // ⚡ MEMOIZE filtered users to prevent re-computation on every render
   const filteredUsers = useMemo(() => {
     let filtered = [...users]
-
-    // Apply search filter (using debounced value)
     if (debouncedSearch) {
       const query = debouncedSearch.toLowerCase()
       filtered = filtered.filter(
@@ -72,7 +68,6 @@ export default function UserManagementPage() {
       )
     }
 
-    // Apply role filter
     if (roleFilter !== 'all') {
       filtered = filtered.filter((user) => user.role === roleFilter)
     }
@@ -80,7 +75,6 @@ export default function UserManagementPage() {
     return filtered
   }, [users, debouncedSearch, roleFilter])
 
-  // ⚡ MEMOIZE exportToCSV with useCallback
   const exportToCSV = useCallback(() => {
     const csvData = filteredUsers.map((user) => ({
       ID: user._id,

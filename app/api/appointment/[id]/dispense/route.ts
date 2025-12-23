@@ -7,7 +7,7 @@ import Appointment from '@/models/Appointment'
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } } // ✅ Correct typing
+  { params }: { params: { id: string } } // Correct typing
 ) {
   await dbConnect()
 

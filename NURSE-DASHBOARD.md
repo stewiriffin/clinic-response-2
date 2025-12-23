@@ -9,9 +9,9 @@ The Nurse Dashboard is a high-efficiency, workflow-centric clinical interface de
 ### 1. Live Patient Queue ("Waiting Room")
 - **Real-time Updates**: Queue refreshes every 8 seconds
 - **Status Indicators**: Visual color coding for patient status
-  - 🟡 **Yellow**: Waiting for vitals
-  - 🔵 **Blue**: In vitals (being processed)
-  - 🟢 **Green**: Done
+  - **Yellow**: Waiting for vitals
+  - **Blue**: In vitals (being processed)
+  - **Green**: Done
 - **Call Patient Button**: Changes status from "Waiting" to "In Vitals"
 - **Smart Sorting**: Critical patients automatically prioritized at the top
 
@@ -21,22 +21,22 @@ The Nurse Dashboard is a high-efficiency, workflow-centric clinical interface de
 - **Temperature** (°C)
   - Normal: 36.5-37.5°C
   - Warning: 38-38.9°C or <35°C
-  - 🔴 **CRITICAL**: ≥39°C (High Fever Alert)
+  - **CRITICAL**: ≥39°C (High Fever Alert)
 
 - **Blood Pressure** (mmHg)
   - Normal: 90-140 / 60-90
   - Warning: 140-179 / 90-119
-  - 🔴 **CRITICAL**: ≥180 / ≥120 (Hypertensive Crisis)
+  - **CRITICAL**: ≥180 / ≥120 (Hypertensive Crisis)
 
 - **Pulse** (bpm)
   - Normal: 60-100
   - Warning: 100-120 or 40-60
-  - 🔴 **CRITICAL**: >120 or <40
+  - **CRITICAL**: >120 or <40
 
 - **Oxygen Saturation** (%)
   - Normal: 95-100%
   - Warning: 90-94%
-  - 🔴 **CRITICAL**: <90% (Hypoxia Alert)
+  - **CRITICAL**: <90% (Hypoxia Alert)
 
 - **Weight** (kg)
 - **Height** (cm)
@@ -225,13 +225,13 @@ Fetch patient's last 10 visits.
 
 ## Mobile Optimization Checklist
 
-✅ Large buttons (min 48px height)
-✅ Touch-friendly inputs (py-3, text-base)
-✅ Responsive sidebar (collapses on mobile)
-✅ High contrast colors
-✅ Clear status indicators
-✅ Swipe-friendly drawer
-✅ No hover-only interactions
+- Large buttons (min 48px height)
+- Touch-friendly inputs (py-3, text-base)
+- Responsive sidebar (collapses on mobile)
+- High contrast colors
+- Clear status indicators
+- Swipe-friendly drawer
+- No hover-only interactions
 
 ## Color Coding System
 

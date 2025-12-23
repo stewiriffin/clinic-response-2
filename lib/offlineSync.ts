@@ -192,17 +192,17 @@ export class OfflineSync {
 
     if (!this.isOnline()) {
       return count > 0
-        ? `⚠️ Offline - ${count} item${count !== 1 ? 's' : ''} pending sync`
-        : '⚠️ Offline Mode'
+        ? `Offline - ${count} item${count !== 1 ? 's' : ''} pending sync`
+        : 'Offline Mode'
     }
 
     if (this.isSyncing) {
-      return '🔄 Syncing...'
+      return 'Syncing...'
     }
 
     return count > 0
-      ? `📡 ${count} item${count !== 1 ? 's' : ''} pending sync`
-      : '✅ All synced'
+      ? `${count} item${count !== 1 ? 's' : ''} pending sync`
+      : 'All synced'
   }
 }
 
